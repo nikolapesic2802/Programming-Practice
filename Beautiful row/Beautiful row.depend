@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1541457794 source:c:\users\nikip\desktop\onedrive\programming practice\beautiful row\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1541446789 source:c:\users\nikip\onedrive\programming practice\beautiful row\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
