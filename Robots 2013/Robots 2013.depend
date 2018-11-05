@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1541346638 source:c:\users\nikip\desktop\robots\grader.c
+	<stdio.h>
+	<stdlib.h>
+	"robots.h"
+
+1373429436 c:\users\nikip\desktop\robots\robots.h
+
+1373429436 source:c:\users\nikip\desktop\robots\robots.cpp
+	"robots.h"
+
+1373429436 source:c:\users\nikip\desktop\robots\robots.c
+	"robots.h"
+
+1539421952 source:c:\users\nikip\onedrive\mustafa\robots 2013\main.cpp
+	<bits/stdc++.h>
+
