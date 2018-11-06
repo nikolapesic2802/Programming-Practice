@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1541528340 source:c:\users\nikip\desktop\onedrive\programming practice\beetle\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1541532274 source:c:\users\nikip\onedrive\programming practice\beetle\main.cpp
+	<bits/stdc++.h>
+

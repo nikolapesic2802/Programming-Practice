@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1541529211 source:c:\users\nikip\desktop\onedrive\programming practice\beatle correct\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1541530617 source:c:\users\nikip\onedrive\programming practice\beatle correct\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+

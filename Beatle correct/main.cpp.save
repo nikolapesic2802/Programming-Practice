@@ -1,0 +1,158 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+#define ll long long
+#define pb push_back
+
+using namespace std;
+using namespace __gnu_pbds;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_set; ///find_by_order(),order_of_key()
+const int N=305;
+ll lim=LLONG_MIN/1000;
+pair<ll,int> dp[N][N][2][N],poc=make_pair((ll)-1,-1);
+vector<int> poz,neg;
+
+pair<ll,int> maxDP(int i,int j,int k,int b)
+{
+    //printf("Usao za %i %i %i  %i %i\n",i,j,k,poz.size(),neg.size());
+    if(i+j+1==b)
+        return make_pair(0,-1);
+    if(dp[i][j][k][b]!=poc)
+        return dp[i][j][k][b];
+    if(k==0)
+    {
+        ll res1;
+        if(i+1<poz.size())
+            res1=maxDP(i+1,j,0,b).first-(neg.size()-j+poz.size()-i-1)*(poz[i+1]-poz[i]);
+        else
+            res1=lim;
+        ll res2;
+        if(j<neg.size())
+            res2=maxDP(i+1,j,1,b).first-(neg.size()-j+poz.size()-i-1)*(poz[i]-neg[j]);
+        else
+            res2=lim;
+        //printf("%i %i %i: %lld  %lld\n",i,j,k,res1,res2);
+        if(res1>=res2)
+        {
+            dp[i][j][k][b]=make_pair(res1,0);
+        }
+        else
+        {
+            dp[i][j][k][b]=make_pair(res2,1);
+        }
+    }
+    if(k==1)
+    {
+        ll res1;
+        if(i<poz.size())
+            res1=maxDP(i,j+1,0,b).first-(neg.size()-j-1+poz.size()-i)*(poz[i]-neg[j]);
+        else
+            res1=lim;
+        ll res2;
+        if(j+1<neg.size())
+            res2=maxDP(i,j+1,1,b).first-(neg.size()-j-1+poz.size()-i)*(neg[j]-neg[j+1]);
+        else
+            res2=lim;
+        //printf("%i %i %i: %lld  %lld\n",i,j,k,res1,res2);
+        if(res1>=res2)
+        {
+            dp[i][j][k][b]=make_pair(res1,0);
+        }
+        else
+        {
+            dp[i][j][k][b]=make_pair(res2,1);
+        }
+    }
+    return dp[i][j][k][b];
+}
+int main()
+{
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<N;j++)
+        {
+            for(int k=0;k<N;k++)
+            {
+                dp[i][j][0][k]=poc;
+                dp[i][j][1][k]=poc;
+            }
+        }
+    }
+    int n,m;
+    scanf("%i %i",&n,&m);
+    int m=mm;
+    int p=0;
+    vector<int> a(n);
+    for(int i=0;i<n;i++)
+    {
+        scanf("%i",&a[i]);
+        if(a[i]==0)
+            p=1;
+    }
+    ll ans=0;
+    poz.pb(0);
+    for(int i=0;i<n;i++)
+    {
+        if(a[i]<0)
+            neg.pb(a[i]);
+        if(a[i]>0)
+            poz.pb(a[i]);
+    }
+    sort(poz.begin(),poz.end());
+    sort(neg.begin(),neg.end());
+    reverse(neg.begin(),neg.end());
+    for(int b=0;b<=n;b++)
+    {
+        ll res=p*m;
+        int l=0,r=0,k=0;
+        while(true)
+        {
+            int smer=maxDP(l,r,k,b).second;
+            //printf("Smer: %i %i %lld\n",smer,m,res);
+            if(smer==-1)
+                break;
+            if(k==0)
+            {
+                if(smer==0)
+                {
+                    //if(l+1<poz.size())
+                    m-=poz[l+1]-poz[l];
+                }
+                else
+                {
+                    //if(l<poz.size()&&r<neg.size())
+                    m-=poz[l]-neg[r];
+                }
+                l++;
+            }
+            else
+            {
+                if(smer==0)
+                {
+                    //if(l<poz.size()&&r<neg.size())
+                    m-=poz[l]-neg[r];
+                }
+                else
+                {
+                    //if(r+1<neg.size())
+                    m-=neg[r]-neg[r+1];
+                }
+                r++;
+            }
+            if(m<=0||smer==-1)
+                break;
+            res+=(ll)m;
+            if(smer==0)
+            if(l==poz.size()-1&&r==neg.size())
+                break;
+            if(smer==1)
+            if(l==poz.size()&&r==neg.size()-1)
+                break;
+            k=smer;
+        }
+    }
+    printf("%lld\n",res);
+    return 0;
+}

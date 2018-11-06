@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1541533032 source:c:\users\nikip\onedrive\programming practice\bea\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
