@@ -1,3 +1,9 @@
+
+/*
+    - Find all the leaves in dfs traversal order.
+    - Connect the i-th leaf with i+leaves.size()/2 for every i=[0,(leaves.size()+1)/2]
+*/
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,10 +19,6 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 const int N=500005;
 vector<vector<int> > graf(N);
 vector<int> leaves;
-/*
-    - Find all the leaves in dfs traversal order.
-    - Connect the i-th leaf with i+leaves.size()/2 for every i=[0,(leaves.size()+1)/2]
-*/
 void dfs(int tr,int par)
 {
     if(graf[tr].size()==1)
