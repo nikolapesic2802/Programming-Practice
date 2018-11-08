@@ -1,3 +1,8 @@
+/*
+    - Find the closest key that unlocks the door to the left and to the right for every door.
+    - For every room expand the interval that we can get to from that room based on if we can find the key to the door to the left or to the right
+      in the current interval we can reach from that room.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -12,7 +17,7 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 const int N=5*1e5+5;
 vector<int> hi(N),lo(N),l(N),r(N);
 bool on(int l,int r,int x){return x>=l&&x<=r;}
-bool can(int l,int r,int x){return on(l,r,hi[x])||on(l,r,lo[x]);}
+bool can(int l,int r,int x){return (hi[x]>=0&&on(l,r,hi[x]))||(lo[x]>=0&&on(l,r,lo[x]));}
 int main()
 {
     int n;
