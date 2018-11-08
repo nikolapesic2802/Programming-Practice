@@ -1,0 +1,105 @@
+question 5 Robots
+input robots.in
+output robots.out
+module grader
+timelimit 5s
+memlimit 64M
+evaluator match_file
+sanity sanity
+
+# GROUP 0 Sample case
+samplecase sample1
+samplecase sample2
+
+# GROUP 14 Subtask 1
+testcase st1-impossible 1
+testcase st1-point-on-line-small 1
+testcase st1-point-on-line-weak 1
+testcase st1-possible 1
+testcase st1-repeat-lines-small 1
+testcase st1-repeat-lines-weak 1
+testcase st1-repeat-points 1
+
+# GROUP 14 Subtask 2
+testcase st1-point-on-line-weak 1
+testcase st1-repeat-lines-weak 1
+testcase st1-repeat-points 1
+testcase st2-cluster-middle 1
+testcase st2-impossible 1
+testcase st2-off-by-one 1
+testcase st2-off-by-one-bigger 1
+testcase st2-spread-middle 1
+testcase st5-all-small-weight 1
+
+# GROUP 25 Subtask 3
+testcase sample1 1
+testcase sample2 1
+testcase st1-impossible 1
+testcase st1-point-on-line-small 1
+testcase st1-point-on-line-weak 1
+testcase st1-possible 1
+testcase st1-repeat-lines-small 1
+testcase st1-repeat-lines-weak 1
+testcase st1-repeat-points 1
+testcase st3-big-size 1
+###
+### NOTE : This testcase was removed from Subtask 3 after the end of the
+### competition, and all student submissions re-evaluated.
+###
+###testcase st3-big-weight 1
+testcase st3-one-small 1
+testcase st3-one-weak 1
+testcase st3-random-impossible 1
+testcase st3-random-uniform 1
+
+# GROUP 37 Subtask 4
+testcase sample1 1
+testcase sample2 1
+testcase st1-impossible 1
+testcase st1-point-on-line-small 1
+testcase st1-point-on-line-weak 1
+testcase st1-possible 1
+testcase st1-repeat-lines-small 1
+testcase st1-repeat-lines-weak 1
+testcase st1-repeat-points 1
+testcase st3-big-size 1
+testcase st3-big-weight 1
+testcase st3-one-small 1
+testcase st3-one-weak 1
+testcase st3-random-impossible 1
+testcase st3-random-uniform 1
+testcase st4-random-uniform 1
+testcase 4-hos-1 1
+testcase 4-hos-2 1
+
+# GROUP 10 Subtask 5
+testcase sample1 1
+testcase sample2 1
+testcase st1-impossible 1
+testcase st1-point-on-line-small 1
+testcase st1-point-on-line-weak 1
+testcase st1-possible 1
+testcase st1-repeat-lines-small 1
+testcase st1-repeat-lines-weak 1
+testcase st1-repeat-points 1
+testcase st2-cluster-middle 1
+testcase st2-impossible 1
+testcase st2-off-by-one 1
+testcase st2-off-by-one-bigger 1
+testcase st2-spread-middle 1
+testcase st3-big-size 1
+testcase st3-big-weight 1
+testcase st3-one-small 1
+testcase st3-one-weak 1
+testcase st3-random-impossible 1
+testcase st3-random-uniform 1
+testcase st4-random-uniform 1
+testcase st5-all-small-size 1
+testcase st5-all-small-weight 1
+testcase st5-random-highS-cluster 1
+testcase st5-random-highS-highW-clusters 1
+testcase st5-random-highW-cluster 1
+testcase st5-random-uniform 1
+testcase 5-hos-1 1
+testcase 5-hos-2 1
+
