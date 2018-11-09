@@ -51,32 +51,46 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
         //printf("%i\n",mid);
         int j=0;
         int test=true;
-        multiset<pair<int,int> > s1;
-        multiset<
-        for(int i=0;i<b;i++)
-        {
-            s1.insert({y[i],mid});
-        }
+        int cnt=0;
+        priority_queue<pair<int,int> > s;
         for(int i=0;i<a;i++)
         {
             //printf("Usao za %i\n",x[i]);
             while(items[j].first<x[i])
             {
                 //printf("Dodajem %i %i\n",items[j].first,items[j].second);
-                s.insert(items[j].second);
+                s.push({items[j].second,cnt++});
                 j++;
             }
             for(int k=0;k<mid;k++)
             {
                 if(s.empty())
                     break;
-                s.erase(s.begin());
+                s.pop();
                 //printf("brisem!\n");
             }
         }
         for(;j<t;j++)
-            s.insert(items[j].second);
-
+            s.push({items[j].second,cnt++});
+        for(int i=0;i<b;i++)
+        {
+            //printf("usao! %i\n",y[i]);
+            for(int k=0;k<mid;k++)
+            {
+                if(s.size()==0)
+                {
+                    break;
+                    break;
+                }
+                if((s.top().first)<y[i])
+                    s.pop();
+                else
+                {
+                    break;
+                    break;
+                }
+            }
+        }
         if(s.size()!=0)
             test=false;
         if(test)
@@ -109,7 +123,8 @@ int main() {
 	int res;
 
 
-	FILE *f = fopen("st5-random-uniform.in", "r");
+	//FILE *f = fopen("st5-random-uniform.in", "r");
+	FILE *f = fopen("st5-random-highW-cluster.in", "r");
 	if (!f)
 		fail("Failed to open input file.");
 
