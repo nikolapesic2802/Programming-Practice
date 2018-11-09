@@ -124,7 +124,7 @@ int main() {
 
 
 	//FILE *f = fopen("st5-random-uniform.in", "r");
-	FILE *f = fopen("st5-random-highW-cluster.in", "r");
+	FILE *f = fopen("st5-random-highS-cluster.in", "r");
 	if (!f)
 		fail("Failed to open input file.");
 
@@ -162,10 +162,10 @@ int main() {
             fail("Failed to read data from input file.");
     }
 	fclose(f);
-
+	int a=clock();
 	int answer = putaway(A, B, T, X, Y, W, S);
 
-	printf("%d\n", answer);
+	printf("%d %i\n", answer,clock()-a);
 
 	return 0;
 }
