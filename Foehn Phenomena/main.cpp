@@ -1,0 +1,114 @@
+/*
+    - We need to update the values only for the beginning and end of the interval, inside it will not change.
+    - We need to raise or lower the land in a segment tree.
+*/
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+#define ll long long
+#define pb push_back
+
+using namespace std;
+using namespace __gnu_pbds;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_set; ///find_by_order(),order_of_key()
+int n;
+struct SegmentTree{
+    vector<ll> lazy;
+    void init(int nn)
+    {
+        lazy.resize(4*nn);
+    }
+    void prop(int i)
+    {
+        lazy[2*i]+=lazy[i];
+        lazy[2*i+1]+=lazy[i];
+        lazy[i]=0;
+    }
+    void set(int l,int r,ll x,int i=1,int lo=0,int hi=n+1)
+    {
+        if(hi<l||lo>r)
+            return;
+        if(l<=lo&&r>=hi)
+        {
+            lazy[i]+=x;
+            return;
+        }
+        int mid=(lo+hi)/2;
+        prop(i);
+        set(l,r,x,2*i,lo,mid);
+        set(l,r,x,2*i+1,mid+1,hi);
+    }
+    ll get(int p,int i=1,int lo=0,int hi=n+1)
+    {
+        if(p<lo||p>hi)
+            return 0;
+        if(hi==lo&&hi==p)
+            return lazy[i];
+        int mid=(lo+hi)/2;
+        prop(i);
+        return get(p,2*i,lo,mid)+get(p,2*i+1,mid+1,hi);
+    }
+} ST;
+int main()
+{
+    int q,s,t;
+    scanf("%i %i %i %i",&n,&q,&s,&t);
+    ST.init(n+2);
+    ST.set(n+1,n+1,LLONG_MIN/10);
+    //printf("%lld\n",ST.get(n+1));
+    vector<int> alt(n+1);
+    for(int i=0;i<=n;i++)
+    {
+        scanf("%i",&alt[i]);
+        ST.set(i,i,alt[i]);
+    }
+    /*for(int i=0;i<=n+1;i++)
+    {
+        printf("%lld ",ST.get(i));
+    }*/
+    ll temp=0;
+    for(int i=1;i<=n;i++)
+    {
+        if(alt[i]>alt[i-1])
+            temp-=(ll)s*(alt[i]-alt[i-1]);
+        else
+            temp+=(ll)t*(alt[i-1]-alt[i]);
+    }
+    for(int i=0;i<q;i++)
+    {
+        int l,r,x;
+        scanf("%i %i %i",&l,&r,&x);
+        ll levo=ST.get(l);
+        ll desno=ST.get(r);
+        ll levo1=ST.get(l-1);
+        ll desno1=ST.get(r+1);
+        //printf("%lld %lld %lld %lld\n",levo1,levo,desno,desno1);
+        if(levo>levo1)
+            temp+=(ll)s*(levo-levo1);
+        else
+            temp-=(ll)t*(levo1-levo);
+        levo+=x;
+        if(levo>levo1)
+            temp-=(ll)s*(levo-levo1);
+        else
+            temp+=(ll)t*(levo1-levo);
+
+        if(desno1!=LLONG_MIN/10)
+        {
+            if(desno1>desno)
+                temp+=(ll)s*(desno1-desno);
+            else
+                temp-=(ll)t*(desno-desno1);
+            desno+=x;
+            if(desno1>desno)
+                temp-=(ll)s*(desno1-desno);
+            else
+                temp+=(ll)t*(desno-desno1);
+        }
+        ST.set(l,r,x);
+        printf("%lld\n",temp);
+    }
+    return 0;
+}
