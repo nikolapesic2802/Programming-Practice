@@ -1,6 +1,6 @@
 /*
     - The basic idea is just to do a 2 pointer.
-    - When the upper value for some is is smaller than the maximum lower value in the interval, we need to move the left pointer.
+    - When the upper value for some position is smaller than the maximum lower value in the interval, we need to move the left pointer.
     - Unfortunately, we need to make a more advanced program to make it pass in time.
     - We use segment tree + binary search to look where to move the left pointer to instead of iterating over the position.
     - There is also the problem of memory usage being to high when using just regular scanf and printf
