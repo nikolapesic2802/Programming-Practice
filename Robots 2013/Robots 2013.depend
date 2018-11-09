@@ -15,7 +15,11 @@
 1539421952 source:c:\users\nikip\onedrive\mustafa\robots 2013\main.cpp
 	<bits/stdc++.h>
 
+<<<<<<< HEAD
 1541769472 source:c:\users\nikip\onedrive\programming practice\robots 2013\main.cpp
+=======
+1541704393 source:c:\users\nikip\onedrive\programming practice\robots 2013\main.cpp
+>>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
 	<bits/stdc++.h>
 	"robots.h"
 
