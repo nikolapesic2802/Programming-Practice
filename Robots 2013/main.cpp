@@ -51,44 +51,26 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
         //printf("%i\n",mid);
         int j=0;
         int test=true;
-<<<<<<< HEAD
         int cnt=0;
         priority_queue<pair<int,int> > s;
-=======
-        multiset<pair<int,int> > s1;
-        multiset<
-        for(int i=0;i<b;i++)
-        {
-            s1.insert({y[i],mid});
-        }
->>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
         for(int i=0;i<a;i++)
         {
             //printf("Usao za %i\n",x[i]);
             while(items[j].first<x[i])
             {
                 //printf("Dodajem %i %i\n",items[j].first,items[j].second);
-<<<<<<< HEAD
                 s.push({items[j].second,cnt++});
-=======
-                s.insert(items[j].second);
->>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
                 j++;
             }
             for(int k=0;k<mid;k++)
             {
                 if(s.empty())
                     break;
-<<<<<<< HEAD
                 s.pop();
-=======
-                s.erase(s.begin());
->>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
                 //printf("brisem!\n");
             }
         }
         for(;j<t;j++)
-<<<<<<< HEAD
             s.push({items[j].second,cnt++});
         for(int i=0;i<b;i++)
         {
@@ -109,10 +91,6 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
                 }
             }
         }
-=======
-            s.insert(items[j].second);
-
->>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
         if(s.size()!=0)
             test=false;
         if(test)
@@ -145,12 +123,8 @@ int main() {
 	int res;
 
 
-<<<<<<< HEAD
 	//FILE *f = fopen("st5-random-uniform.in", "r");
 	FILE *f = fopen("st5-random-highW-cluster.in", "r");
-=======
-	FILE *f = fopen("st5-random-uniform.in", "r");
->>>>>>> d54234aa3030ef6f30273ac78d90bc1bad459a2e
 	if (!f)
 		fail("Failed to open input file.");
 
