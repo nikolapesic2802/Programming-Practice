@@ -1,3 +1,7 @@
+/*
+    - Binary search for the answer, and greedily check if we can collect all the items in the given amount of seconds.
+    - The check can be done in T*log T so the total complexity is T*log^2 T
+*/
 #include <bits/stdc++.h>
 #include "robots.h"
 #define pb push_back
