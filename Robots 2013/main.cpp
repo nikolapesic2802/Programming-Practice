@@ -13,52 +13,20 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
         items[i].first=W[i];
         items[i].second=S[i];
     }
-    if(b==0)
-    {
-        //printf("usao!\n");
-        multiset<int> s;
-        while(items.size())
-        {
-            s.insert((items.back()).first);
-            items.pop_back();
-        }
-        multiset<int>::iterator it=s.end();
-        it--;
-        if(*it>x[a-1])
-            return -1;
-        for(int res=1;res<=t;res++)
-        {
-            for(int i=0;i<a;i++)
-            {
-                it=s.lower_bound(x[i]);
-                if(it==s.begin())
-                    continue;
-                it--;
-                s.erase(it);
-                if(s.size()==0)
-                {
-                    return res;
-                }
-            }
-        }
-    }
     items.pb(maxx);
     sort(items.begin(),items.end());
     int l=1,r=t+5;
     while(l<r)
     {
         int mid=(l+r)/2;
-        //printf("%i\n",mid);
         int j=0;
         int test=true;
         int cnt=0;
         priority_queue<pair<int,int> > s;
         for(int i=0;i<a;i++)
         {
-            //printf("Usao za %i\n",x[i]);
             while(items[j].first<x[i])
             {
-                //printf("Dodajem %i %i\n",items[j].first,items[j].second);
                 s.push({items[j].second,cnt++});
                 j++;
             }
@@ -67,14 +35,12 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
                 if(s.empty())
                     break;
                 s.pop();
-                //printf("brisem!\n");
             }
         }
         for(;j<t;j++)
             s.push({items[j].second,cnt++});
         for(int i=0;i<b;i++)
         {
-            //printf("usao! %i\n",y[i]);
             for(int k=0;k<mid;k++)
             {
                 if(s.size()==0)
