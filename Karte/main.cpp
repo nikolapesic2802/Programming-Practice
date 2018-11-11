@@ -37,7 +37,6 @@ int main()
         karte.erase(karte.find(a));
         if(a!=k)
             k--;
-        continue;
     }
     int cnt=0;
     for(int i=n-1;i>=0;i--)
