@@ -25,13 +25,12 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
         int mid=(l+r)/2;
         int j=0;
         int test=true;
-        int cnt=0;
-        priority_queue<pair<int,int> > s;
+        priority_queue<int> s;
         for(int i=0;i<a;i++)
         {
             while(items[j].first<x[i])
             {
-                s.push({items[j].second,cnt++});
+                s.push(items[j].second);
                 j++;
             }
             for(int k=0;k<mid;k++)
@@ -42,7 +41,7 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
             }
         }
         for(;j<t;j++)
-            s.push({items[j].second,cnt++});
+            s.push(items[j].second);
         for(int i=0;i<b;i++)
         {
             for(int k=0;k<mid;k++)
@@ -52,7 +51,7 @@ int putaway(int a, int b, int t, int x[], int y[], int W[], int S[]) {
                     break;
                     break;
                 }
-                if((s.top().first)<y[i])
+                if((s.top())<y[i])
                     s.pop();
                 else
                 {
