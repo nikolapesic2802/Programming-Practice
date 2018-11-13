@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1542040247 source:c:\users\nikip\desktop\onedrive\programming practice\summer practice report\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1542055734 source:c:\users\nikip\onedrive\programming practice\summer practice report\main.cpp
+	<iostream>
+	<cstdio>
+
