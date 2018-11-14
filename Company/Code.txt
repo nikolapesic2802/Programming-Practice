@@ -1,6 +1,4 @@
 /*
-    - Save in a segment tree for every future height, the heights at which we would benefit from taking the current pillar
-*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -82,7 +80,6 @@ struct segmentTree{
             inc[i]+=x;
             return;
         }
-        prop(i);
         int m=(l+r)/2;
         increase(qs,qe,x,2*i,l,m);
         increase(qs,qe,x,2*i+1,m+1,r);
@@ -97,7 +94,6 @@ struct segmentTree{
             iszero[i]=true;
             return;
         }
-        prop(i);
         int m=(l+r)/2;
         set(qs,qe,x,2*i,l,m);
         set(qs,qe,x,2*i+1,m+1,r);
@@ -121,15 +117,13 @@ struct segmentTree{
         return get(p,2*i+1,m+1,r);
     }
 } ST;
-int hi,y,we;
-ll W;
-ll calc(int mid)
+ll calc(int mid,int h,int y,ll W,int w)
 {
-    ll o1=(ll)(mid-hi)*(ll)(mid-hi)+(ll)(hi-y)*(hi-y)+W;
+    ll o1=(ll)(mid-h)*(ll)(mid-h)+(ll)(h-y)*(h-y)+W;
     pair<int,ll> lol=ST.get(mid);
     int y2=lol.first;
     ll W2=lol.second;
-    ll o2=(ll)(mid-y2)*(mid-y2)+we+W2;
+    ll o2=(ll)(mid-y2)*(mid-y2)+w+W2;
     return o1-o2;
 }
 int main()
@@ -142,6 +136,7 @@ int main()
         scanf("%i",&h[i]);
         N=max(N,h[i]);
     }
+    N++;
     ST.init();
     for(int i=0;i<n;i++)
     {
@@ -156,50 +151,93 @@ int main()
         //printf("Usao za %i  %i %i\n",i,h[i],w[i]);
         int l=0;
         pair<int,ll> lol=ST.get(h[i]);
-        y=lol.first;
-        W=lol.second;
-        hi=h[i];
-        we=w[i];
-        ll last=-1;
-        int lodd=-1;
-        for(int j=0;j<=N;j++)
+        int y=lol.first;
+        ll W=lol.second;
+        //printf("%i %lld\n",y,W);
+        int mid;
+        mid=0;
+        ///negativno-uzmi pozitivno-nemoj uzeti
+        ll s=calc(N,h[i],y,W,w[i]);
+        ll e=calc(N-1,h[i],y,W,w[i]);
+        if(s>0&&e>s)
         {
-            ll t=calc(j);
-            /*//printf("%i\n",t);
-
-            if(last==-1)
-                last=t;
-            else
+            ST.increase(0,N,w[i]);
+            continue;
+        }
+        if(calc(l,h[i],y,W,w[i])>0)
+        {
+            l++;
+            int r=N;
+            while(l<r)
             {
-                if(t==last&&lodd!=1)
+                int mid=(l+r)/2;
+                ll t=calc(mid,h[i],y,W,w[i]);
+                if(t<=0)
                 {
-                    assert(lodd==-1);
-                    lodd=1;
-                    //printf("ISTA!\n");
+                    r=mid;
+                    continue;
                 }
-                if(t<last&&lodd!=2)
+                ll t2=t;
+                int c=1;
+                while(true){
+                if(mid+c>N)
                 {
-                    assert(lodd==-1);
-                    lodd=2;
-                    //printf("OPADA!\n");
+                    r=mid;
+                    break;
+                    continue;
                 }
-                if(t>last&&lodd!=3)
+                ll t2=calc(mid+c,h[i],y,W,w[i]);
+                if(t2>t)
                 {
-                    assert(lodd==-1||lodd==2);
-                    lodd=3;
-                    //printf("RASTE!\n");
+                    r=mid-1;
+                    break;
+                    continue;
                 }
-                last=t;
-            }*/
-            if(t<0)
-            {
-                ST.set(j,j,mp(h[i],W+(ll)(h[i]-y)*(h[i]-y)));
-            }
-            else
-            {
-                ST.increase(j,j,w[i]);
+                if(t2<t)
+                {
+                    l=mid+1;
+                    break;
+                    continue;
+                }
+                c++;
+                }
             }
         }
+        if(calc(l,h[i],y,W,w[i])>0)
+            l=N+1;
+        int left=l,right=N;
+        while(left<right)
+        {
+            int mid=(left+right)/2;
+            ll t=calc(mid,h[i],y,W,w[i]);
+            if(t<=0)
+            {
+                if(right-left==1)
+                {
+                    if(calc(mid+1,h[i],y,W,w[i])<=0)
+                    {
+                        left=right;
+                        break;
+                    }
+                    else
+                    {
+                        right=left;
+                        break;
+                    }
+                }
+                left=mid;
+            }
+            else
+            {
+                right=mid-1;
+            }
+        }
+        if(l>0)
+            ST.increase(0,l-1,w[i]);
+        if(left<N)
+            ST.increase(left+1,N,w[i]);
+        if(l<=N&&left<=N)
+        ST.set(l,left,mp(h[i],W+(ll)(h[i]-y)*(h[i]-y)));
     }
     int i=n-1;
     pair<int,ll> lol=ST.get(h[i]);
@@ -210,3 +248,4 @@ int main()
     printf("%lld\n",res);
     return 0;
 }
+*/
