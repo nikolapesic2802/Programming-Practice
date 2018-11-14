@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1542231059 source:c:\users\nikip\desktop\onedrive\codeforces\company\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1542223145 source:c:\users\nikip\onedrive\codeforces\company\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
