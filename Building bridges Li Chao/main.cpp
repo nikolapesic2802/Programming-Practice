@@ -8,11 +8,6 @@ using namespace std;
 struct func{
     int h;
     ll w;
-    func()
-    {
-        h=-1;
-        w=0;
-    }
 };
 ll f(func x,int poz)
 {
