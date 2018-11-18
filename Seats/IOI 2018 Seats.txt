@@ -1,0 +1,2 @@
+3850ms solution: https://github.com/nikolapesic2802/Programming-Practice/blob/master/Seats/main.cpp
+3500ms solution(ugly and more complex): https://github.com/nikolapesic2802/Programming-Practice/blob/master/Seats/Seats%20faster.txt
