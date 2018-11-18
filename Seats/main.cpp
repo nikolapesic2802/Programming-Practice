@@ -1,3 +1,10 @@
+/*
+    -Same idea as in the editorial for the problem.
+    -Really hard to get an implementation like this one to pass, every if and return help
+    -We just use a segment tree with lazy propagation, operations for the segment tree:
+        *Add a value to all elements of ones/tri in range qs-qe
+        *Get the minimum and the number of minimum element in the whole segment tree
+*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -11,7 +18,6 @@ struct segTree{
     vector<int> num;
     void set(int i,int l,int r)
     {
-        //minn[i]=make_pair(0,0);
         num[i]=r-l+1;
         if(l==r)
             return;
@@ -30,18 +36,18 @@ struct segTree{
     void prop(int i)
     {
         if(ones[i]!=0){
-        ones[2*i]+=ones[i];
-        minn[2*i].first+=ones[i];
-        ones[2*i+1]+=ones[i];
-        minn[2*i+1].first+=ones[i];
-        ones[i]=0;
+            ones[2*i]+=ones[i];
+            minn[2*i].first+=ones[i];
+            ones[2*i+1]+=ones[i];
+            minn[2*i+1].first+=ones[i];
+            ones[i]=0;
         }
         if(tri[i]!=0){
-        tri[2*i]+=tri[i];
-        minn[2*i].second+=tri[i];
-        tri[2*i+1]+=tri[i];
-        minn[2*i+1].second+=tri[i];
-        tri[i]=0;
+            tri[2*i]+=tri[i];
+            minn[2*i].second+=tri[i];
+            tri[2*i+1]+=tri[i];
+            minn[2*i+1].second+=tri[i];
+            tri[i]=0;
         }
     }
     void update(int i)
@@ -69,7 +75,6 @@ struct segTree{
         if(l==r){
             minn[i].first+=ones[i];
             minn[i].second+=tri[i];
-            //printf("%i: %i %i\n",l,minn[i].first,minn[i].second);
             return;
         }
         int m=(l+r)>>1;
@@ -91,14 +96,11 @@ struct segTree{
             return;
         if(qs<=l&&r<=qe)
         {
-            //printf("Dodajem %i %i od %i do %i %i\n",x,sta,l,r,i);
             if(sta==0){
                 ones[i]+=x;
-                //minn[i].first+=x;
             }
             else{
                 tri[i]+=x;
-                //minn[i].second+=x;
             }
             return;
         }
@@ -132,7 +134,6 @@ struct segTree{
     }
     int get()
     {
-        //printf("%i %i\n",minn[1].first,minn[1].second);
         if(minn[1]==make_pair(4,0))
             return num[1];
         return 0;
@@ -194,7 +195,6 @@ void give_initial_chart(int H, int W, std::vector<int> R, std::vector<int> C) {
         for(int j=-1;j<W;j++)
             update2(i,j,1);
     ST.update_all();
-    //printf("%i\n",ST.get());
 }
 int swap_seats(int a, int b) {
     for(int i=-1;i<=0;i++)
