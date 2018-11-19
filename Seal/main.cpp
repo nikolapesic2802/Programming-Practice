@@ -1,3 +1,6 @@
+/*
+    -Greedily apply the pattern to the upper left most 'x'.
+*/
 #include <bits/stdc++.h>
 
 #define ll long long
