@@ -1,4 +1,5 @@
 /*
+    -Video explaining the problem: https://www.youtube.com/watch?v=GFJy1HUiV_k (first problem in the video)
     -Greedily apply the pattern to the upper left most 'x'.
 */
 #include <bits/stdc++.h>
