@@ -1,3 +1,8 @@
+/*
+    -Binary search for the answer, and check if we can spread the fire with a greedy
+    -Subtract 2*m*t*i from the element at position i
+    -Check if we can light all the fires if we start from interval [k,k] and also check if we can do it in reverse
+*/
 #include <bits/stdc++.h>
 
 #define ll long long
