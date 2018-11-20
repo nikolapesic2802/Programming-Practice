@@ -1,3 +1,7 @@
+/*
+    -Trick is to xor all the positions where there is a 1
+    -By flipping the right coin, you can make this value exactly equal to c
+*/
 #include <bits/stdc++.h>
 //#include "coins.h"
 
