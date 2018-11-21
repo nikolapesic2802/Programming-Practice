@@ -33,10 +33,10 @@ template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
 }
 int h,w;
 const int N=5e4+5;
-int sparce[2][2][N][20];
+int sparce[2][2][N][20];///0,0 up  0,1 down 1,0 left 1,1 right
 vector<int> ver(N),hor(N);
-map<int,ll> memo[2][N];///0-up,down, 1-levo,desno;
-///0,0 up  0,1 down 1,0 left
+map<int,ll> memo[2][N];///0-up,down, 1-left,right;
+/// levo=left  desno=right
 int up(int tr,int v)
 {
     for(int j=0;j<20;j++)
