@@ -1,0 +1,231 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
+	os << '{';
+	for(int i=0;i<sz(a);i++)
+	{
+		if(i>0&&i<sz(a)-1)
+			os << ", ";
+		os << a[i];
+	}
+	os << '}';
+    return os;
+}
+
+struct segTree{
+    int n;
+    vector<int> maxx;
+    void levodate(int i)
+    {
+        maxx[i]=max(maxx[2*i],maxx[2*i+1]);
+    }
+    void init(vector<int> v)
+    {
+        n=v.size();
+        maxx.resize(2*v.size());
+        for(int i=v.size();i<2*v.size();i++)
+            maxx[i]=v[i-v.size()];
+        for(int i=v.size()-1;i>0;i--)
+            levodate(i);
+    }
+    int get(int l,int r)
+    {
+        int m=0;
+        for(l+=n,r+=n;l<=r;l>>=1,r>>=1)
+        {
+            if(l%2==1)
+            {
+                m=max(m,maxx[l]);
+                l++;
+            }
+            if(r%2==0)
+            {
+                m=max(m,maxx[r]);
+                r--;
+            }
+        }
+        return m;
+    }
+} ST;
+int h,w;
+const int N=5e4+5;
+vector<int> up(N),down(N),levo(N),desno(N);
+map<int,int> memo[2][N];///0-up,down, 1-gore,dole;
+int calc(int x,int y,int br)
+{
+    if(memo[br][x][y]!=0)
+        return memo[br][x][y];
+    if(br==0)
+    {
+        if(up[x]==-1)
+        {
+            memo[br][x][y]=x;
+        }
+        else
+        {
+            memo[br][x][y]=calc(up[x],y,1)+x-up[x];
+        }
+        if(down[x]==-1)
+        {
+            memo[br][x][y]=max(memo[br][x][y],h-1-x);
+        }
+        else
+        {
+            memo[br][x][y]=max(memo[br][x][y],calc(down[x],y,1)+down[x]-x);
+        }
+    }
+    else
+    {
+        if(levo[y]==-1)
+        {
+            memo[br][x][y]=y;
+        }
+        else
+        {
+            memo[br][x][y]=calc(x,levo[y],0)+y-levo[y];
+        }
+        if(desno[y]==-1)
+        {
+            memo[br][x][y]=max(memo[br][x][y],w-1-y);
+        }
+        else
+        {
+            memo[br][x][y]=max(memo[br][x][y],calc(x,desno[y],0));
+        }
+    }
+    return memo[br][x][y];
+}
+int main()
+{
+	int q;
+	scanf("%i %i %i",&h,&w,&q);
+	vector<int> hor(h);
+	for(int i=0;i<h;i++)
+        scanf("%i",&hor[i]);
+    ST.init(hor);
+    for(int i=0;i<h;i++)
+    {
+        if(i==0){
+            up[i]=-1;
+            continue;
+        }
+        int l=0,r=i-1;
+        while(l<r)
+        {
+            int mid=(l+r+1)>>1;
+            if(ST.get(mid,i-1)>hor[i])
+            {
+                l=mid;
+            }
+            else
+            {
+                r=mid-1;
+            }
+        }
+        if(ST.get(l,i-1)<hor[i])
+            up[i]=-1;
+        else
+            up[i]=l;
+    }
+    for(int i=0;i<h;i++)
+    {
+        if(i==h-1){
+            down[i]=-1;
+            continue;
+        }
+        int l=i+1,r=h-1;
+        while(l<r)
+        {
+            int mid=(l+r)>>1;
+            if(ST.get(i+1,mid)>hor[i])
+            {
+                r=mid;
+            }
+            else
+            {
+                l=mid+1;
+            }
+        }
+        if(ST.get(i+1,l)<hor[i])
+            down[i]=-1;
+        else
+            down[i]=l;
+    }
+    vector<int> ver(w);
+    for(int i=0;i<w;i++)
+        scanf("%i",&ver[i]);
+    ST.init(ver);
+    for(int i=0;i<h;i++)
+    {
+        if(i==0){
+            levo[i]=-1;
+            continue;
+        }
+        int l=0,r=i-1;
+        while(l<r)
+        {
+            int mid=(l+r+1)>>1;
+            if(ST.get(mid,i-1)>hor[i])
+            {
+                l=mid;
+            }
+            else
+            {
+                r=mid-1;
+            }
+        }
+        if(ST.get(l,i-1)<hor[i])
+            levo[i]=-1;
+        else
+            levo[i]=l;
+    }
+    for(int i=0;i<h;i++)
+    {
+        if(i==h-1){
+            desno[i]=-1;
+            continue;
+        }
+        int l=i+1,r=h-1;
+        while(l<r)
+        {
+            int mid=(l+r)>>1;
+            if(ST.get(i+1,mid)>hor[i])
+            {
+                r=mid;
+            }
+            else
+            {
+                l=mid+1;
+            }
+        }
+        if(ST.get(i+1,l)<hor[i])
+            desno[i]=-1;
+        else
+            desno[i]=l;
+    }
+    for(int i=0;i<q;i++)
+    {
+        int x,y;
+        scanf("%i %i",&x,&y);
+        x--;
+        y--;
+    }
+    return 0;
+}
