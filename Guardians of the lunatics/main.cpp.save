@@ -1,0 +1,25 @@
+#include <bits/stdc++.h>
+
+#define mp make_pair
+
+using namespace std;
+
+long long dp[805][8005],pre[8005];
+void calc(int d,int l,int r,int L,int R)
+{
+    if(l>r) return;
+    int mid=(l+r)>>1;
+    pair<long long,int> sol=mp(LLONG_MAX/2,0);
+    for(int i=L;i<=min(mid,R);i++) sol=min(sol,mp(dp[d-1][i-1]+(pre[mid]-pre[i-1])*(mid-i+1),i));
+    dp[d][mid]=sol.first;
+    calc(d,l,mid-1,L,sol.second);
+    calc(d,mid+1,r,sol.second,R);
+}
+int main() {
+	int l,g;
+	scanf("%i %i",&l,&g);
+	for(int i=1;i<=l;i++) scanf("%lld",&pre[i]),pre[i]+=pre[i-1];
+    for(int i=1;i<=l;i++) dp[0][i]=LLONG_MAX/2;
+    for(int i=1;i<=g;i++) calc(i,1,l,1,l);
+    printf("%lld\n",dp[g][l]);
+}
