@@ -1,0 +1,312 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define pb push_back
+int N;
+struct segTree{
+    vector<int> ones,tri;
+    vector<int> sum;
+    vector<pair<int,int> > minn;
+    vector<int> num;
+    void set(int i,int l,int r)
+    {
+        minn[i]=make_pair(0,0);
+        num[i]=r-l+1;
+        if(l==r)
+            return;
+        int m=(l+r)>>1;
+        set(2*i,l,m);
+        set(2*i+1,m+1,r);
+    }
+    void init()
+    {
+        ones.resize(4*N);
+        tri.resize(4*N);
+        minn.resize(4*N);
+        num.resize(4*N);
+        set(1,0,N-1);
+    }
+    void prop(int i)
+    {
+        if(ones[i]!=0){
+        ones[2*i]+=ones[i];
+        minn[2*i].first+=ones[i];
+        ones[2*i+1]+=ones[i];
+        minn[2*i+1].first+=ones[i];
+        ones[i]=0;
+        }
+        if(tri[i]!=0)
+        {
+        tri[2*i]+=tri[i];
+        minn[2*i].second+=tri[i];
+        tri[2*i+1]+=tri[i];
+        minn[2*i+1].second+=tri[i];
+        tri[i]=0;
+        }
+    }
+    void update(int i)
+    {
+        if(minn[2*i]==minn[2*i+1])
+        {
+            minn[i]=minn[2*i];
+            num[i]=num[2*i]+num[2*i+1];
+            return;
+        }
+        if(minn[2*i]<minn[2*i+1])
+        {
+            minn[i]=minn[2*i];
+            num[i]=num[2*i];
+            return;
+        }
+        if(minn[2*i]>minn[2*i+1])
+        {
+            minn[i]=minn[2*i+1];
+            num[i]=num[2*i+1];
+        }
+    }
+    void add(int qs,int qe,int x,int sta,int i=1,int l=0,int r=N-1)
+    {
+        //printf("%i %i %i %i   %i %i %i\n",qs,qe,x,sta,i,l,r);
+        if(qe<qs)
+            return;
+        if(r<qs||l>qe)
+            return;
+        if(qs<=l&&r<=qe)
+        {
+            if(sta==0){
+                ones[i]+=x;
+                minn[i].first+=x;
+            }
+            else{
+                tri[i]+=x;
+                minn[i].second+=x;
+            }
+            return;
+        }
+        int m=(l+r)>>1;
+        prop(i);
+        add(qs,qe,x,sta,2*i,l,m);
+        add(qs,qe,x,sta,2*i+1,m+1,r);
+        update(i);
+    }
+    int get()
+    {
+        //printf("%i %i\n",minn[1].first,minn[1].second);
+        if(minn[1]==make_pair(4,0))
+            return num[1];
+        return 0;
+    }
+} ST;
+vector<vector<int> > mat;
+int h,w;
+bool inside(int x,int y)
+{
+    if(x>=0&&x<h&&y>=0&&y<w)
+        return true;
+    return false;
+}
+void update(int x,int y,int z)
+{
+    vector<int> val;
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            if(inside(x+i,y+j))
+                val.pb(mat[x+i][y+j]);
+    sort(val.begin(),val.end());
+    if(val.size()==4)
+    {
+        ST.add(val[0],val[1]-1,z,0);
+        ST.add(val[2],val[3]-1,z,1);
+        return;
+        //printf("Dodajem 1 od %i do %i, dodajem 3 od %i do %i\n",val[0],val[1]-1,val[2],val[3]-1);
+    }
+    if(val.size()==3)
+    {
+        assert(0);
+    }
+    if(val.size()==2)
+    {
+        ST.add(val[0],val[1]-1,z,0);
+        return;
+        //printf("Dodajem 1 od %i do %i\n",val[0],val[1]-1);
+    }
+    if(val.size()==1)
+    {
+        ST.add(val[0],N-1,z,0);
+        //printf("Dodajem 1 od %i do %i\n",val[0],N-1);
+    }
+}
+vector<int> r,c;
+vector<bool> sol;
+multiset<int> tr;
+int get(int poz)
+{
+    if(tr.size()<=poz)
+        return N;
+    multiset<int>::iterator it=tr.begin();
+    for(int i=0;i<poz;i++)
+        it++;
+    return *it;
+}
+void give_initial_chart(int H, int W, std::vector<int> R, std::vector<int> C) {
+    h=H;
+    w=W;
+    sol.resize(H*W);
+    mat.resize(H);
+    for(int i=0;i<H;i++)
+        mat[i].resize(W);
+    N=H*W;
+    ST.init();
+    for(int i=0;i<H*W;i++){
+        mat[R[i]][C[i]]=i;
+        r.pb(R[i]);
+        c.pb(C[i]);
+    }
+    for(int i=-1;i<H;i++)
+    {
+        tr.clear();
+        if(i==-1)
+        {
+
+        }
+        else
+            tr.insert(mat[i][0]);
+        if(i==H-1)
+        {
+
+        }
+        else
+            tr.insert(mat[i+1][0]);
+        ST.add(get(tr,0),get(tr,1)-1,1,0);
+        ST.add(get(tr,2),get(tr,3)-1,1,1);
+        //printf("Prosao!\n");
+        for(int j=0;j<W;j++)
+        {
+            if(i!=-1&&i!=H-1)
+            {
+                if(j==0){
+                }
+                else{
+                    tr.erase(mat[i][j-1]);
+                    tr.erase(mat[i+1][j-1]);
+                }
+                if(j==W-1)
+                {
+                }
+                else
+                {
+                    tr.insert(mat[i][j+1]);
+                    tr.insert(mat[i+1][j+1]);
+                }
+                ST.add(get(tr,0),get(tr,1)-1,1,0);
+                ST.add(get(tr,2),get(tr,3)-1,1,1);
+            }
+            else
+            {
+                if(i!=H-1)
+                {
+                    if(j==0){
+                    }
+                    else{
+                        tr.erase(mat[i+1][j-1]);
+                    }
+                    if(j==W-1)
+                    {
+                    }
+                    else
+                    {
+                        tr.insert(mat[i+1][j+1]);
+                    }
+                    ST.add(get(tr,0),get(tr,1)-1,1,0);
+                    ST.add(get(tr,2),get(tr,3)-1,1,1);
+                }
+                else
+                {
+                    //printf("zadnji!\n");
+                    if(j==0){
+                    }
+                    else{
+                        tr.erase(mat[i][j-1]);
+                    }
+                    if(j==W-1)
+                    {
+                    }
+                    else
+                    {
+                        tr.insert(mat[i][j+1]);
+                    }
+                    ST.add(get(tr,0),get(tr,1)-1,1,0);
+                    ST.add(get(tr,2),get(tr,3)-1,1,1);
+                }
+            }
+        }
+    }
+    /*for(int i=-1;i<H;i++)
+        for(int j=-1;j<W;j++)
+            update(i,j,1);*/
+    //printf("%i\n",ST.get());
+}
+int swap_seats(int a, int b) {
+    //printf("%i %i  %i %i\n",r[a],c[a],r[b],c[b]);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[a]+i,c[a]+j,-1);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[b]+i,c[b]+j,-1);
+    //printf("Cmon!\n");
+    swap(mat[r[a]][c[a]],mat[r[b]][c[b]]);
+    swap(r[a],r[b]);
+    swap(c[a],c[b]);
+    /*for(int i=0;i<h;i++)
+    {
+        for(int j=0;j<w;j++)
+            printf("%i ",mat[i][j]);
+        printf("\n");
+    }*/
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[a]+i,c[a]+j,1);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[b]+i,c[b]+j,1);
+    return ST.get();
+}
+FILE *f;
+int read_int() {
+  /*int x;
+  if (scanf("%d", &x) != 1) {
+    fprintf(stderr, "Error while reading input\n");
+    exit(1);
+  }*/
+  int x;
+  fscanf(f,"%d",&x);
+  return x;
+}
+
+int main() {
+  f=fopen("03-01.txt","r");
+  int H = read_int();
+  int W = read_int();
+  int Q = read_int();
+  std::vector<int> R(H * W), C(H * W);
+  for (int i = 0; i < H * W; ++i) {
+    R[i] = read_int();
+    C[i] = read_int();
+  }
+  std::vector<int> A(Q), B(Q);
+  for (int j = 0; j < Q; ++j) {
+    A[j] = read_int();
+    B[j] = read_int();
+  }
+  //int t=clock();
+  give_initial_chart(H, W, R, C);
+  //printf("%i\n",clock()-t);
+  for (int j = 0; j < Q; ++j) {
+    int answer = swap_seats(A[j], B[j]);
+    //printf("%d\n", answer);
+  }
+  //printf("%i\n",clock()-t);
+  return 0;
+}
