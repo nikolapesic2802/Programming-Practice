@@ -1,0 +1,2 @@
+n*log(n): https://github.com/nikolapesic2802/Programming-Practice/blob/master/Building%20bridges%20Li%20Chao/main.cpp
+n*log^2(n): https://github.com/nikolapesic2802/Programming-Practice/blob/master/Building%20Bridges/main.cpp

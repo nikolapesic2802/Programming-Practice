@@ -1,0 +1,283 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define pb push_back
+int N;
+struct segTree{
+    vector<int> ones,tri;
+    vector<int> sum;
+    vector<pair<int,int> > minn;
+    vector<int> num;
+    void set(int i,int l,int r)
+    {
+        num[i]=r-l+1;
+        if(l==r)
+            return;
+        int m=(l+r)>>1;
+        set(2*i,l,m);
+        set(2*i+1,m+1,r);
+    }
+    void init()
+    {
+        ones.resize(4*N);
+        tri.resize(4*N);
+        minn.resize(4*N);
+        num.resize(4*N);
+        set(1,0,N-1);
+    }
+    void prop(int i)
+    {
+        if(ones[i]!=0){
+        ones[2*i]+=ones[i];
+        minn[2*i].first+=ones[i];
+        ones[2*i+1]+=ones[i];
+        minn[2*i+1].first+=ones[i];
+        ones[i]=0;
+        }
+        if(tri[i]!=0)
+        {
+        tri[2*i]+=tri[i];
+        minn[2*i].second+=tri[i];
+        tri[2*i+1]+=tri[i];
+        minn[2*i+1].second+=tri[i];
+        tri[i]=0;
+        }
+    }
+    void update(int i)
+    {
+        if(minn[2*i]==minn[2*i+1])
+        {
+            minn[i]=minn[2*i];
+            num[i]=num[2*i]+num[2*i+1];
+            return;
+        }
+        if(minn[2*i]<minn[2*i+1])
+        {
+            minn[i]=minn[2*i];
+            num[i]=num[2*i];
+            return;
+        }
+        if(minn[2*i]>minn[2*i+1])
+        {
+            minn[i]=minn[2*i+1];
+            num[i]=num[2*i+1];
+        }
+    }
+    void nope(int qs,int qe,int x,int sta,int i=1,int l=0,int r=N-1)
+    {
+        if(qe<qs)
+            return;
+        if(r<qs||l>qe)
+            return;
+        if(qs<=l&&r<=qe)
+        {
+            //printf("Dodajem %i %i od %i do %i %i\n",x,sta,l,r,i);
+            if(sta==0){
+                ones[i]+=x;
+                //minn[i].first+=x;
+            }
+            else{
+                tri[i]+=x;
+                //minn[i].second+=x;
+            }
+            return;
+        }
+        int m=(l+r)>>1;
+        nope(qs,qe,x,sta,2*i,l,m);
+        nope(qs,qe,x,sta,2*i+1,m+1,r);
+    }
+    void update_all(int i=1,int l=0,int r=N-1)
+    {
+        if(l==r){
+            minn[i].first+=ones[i];
+            minn[i].second+=tri[i];
+            //printf("%i: %i %i\n",l,minn[i].first,minn[i].second);
+            return;
+        }
+        int m=(l+r)>>1;
+        ones[2*i]+=ones[i];
+        ones[2*i+1]+=ones[i];
+        ones[i]=0;
+        tri[2*i]+=tri[i];
+        tri[2*i+1]+=tri[i];
+        tri[i]=0;
+        update_all(2*i,l,m);
+        update_all(2*i+1,m+1,r);
+        update(i);
+    }
+    void add(int qs,int qe,int x,int sta,int i=1,int l=0,int r=N-1)
+    {
+        //printf("%i %i %i %i   %i %i %i\n",qs,qe,x,sta,i,l,r);
+        if(qe<qs)
+            return;
+        if(r<qs||l>qe)
+            return;
+        if(qs<=l&&r<=qe)
+        {
+            if(sta==0){
+                ones[i]+=x;
+                minn[i].first+=x;
+            }
+            else{
+                tri[i]+=x;
+                minn[i].second+=x;
+            }
+            return;
+        }
+        int m=(l+r)>>1;
+        prop(i);
+        add(qs,qe,x,sta,2*i,l,m);
+        add(qs,qe,x,sta,2*i+1,m+1,r);
+        update(i);
+    }
+    int get()
+    {
+        //printf("%i %i\n",minn[1].first,minn[1].second);
+        if(minn[1]==make_pair(4,0))
+            return num[1];
+        return 0;
+    }
+} ST;
+vector<vector<int> > mat;
+int h,w;
+bool inside(int x,int y)
+{
+    if(x>=0&&x<h&&y>=0&&y<w)
+        return true;
+    return false;
+}
+void update(int x,int y,int z)
+{
+    vector<int> val;
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            if(inside(x+i,y+j))
+                val.pb(mat[x+i][y+j]);
+    sort(val.begin(),val.end());
+    if(val.size()==4)
+    {
+        ST.add(val[0],val[1]-1,z,0);
+        ST.add(val[2],val[3]-1,z,1);
+        return;
+        //printf("Dodajem 1 od %i do %i, dodajem 3 od %i do %i\n",val[0],val[1]-1,val[2],val[3]-1);
+    }
+    if(val.size()==3)
+    {
+        assert(0);
+    }
+    if(val.size()==2)
+    {
+        ST.add(val[0],val[1]-1,z,0);
+        return;
+        //printf("Dodajem 1 od %i do %i\n",val[0],val[1]-1);
+    }
+    if(val.size()==1)
+    {
+        ST.add(val[0],N-1,z,0);
+        //printf("Dodajem 1 od %i do %i\n",val[0],N-1);
+    }
+}
+vector<int> r,c;
+vector<bool> sol;
+int get(int x,int y)
+{
+    if(inside(x,y))
+        return mat[x][y];
+    return N;
+}
+void give_initial_chart(int H, int W, std::vector<int> R, std::vector<int> C) {
+    h=H;
+    w=W;
+    sol.resize(H*W);
+    mat.resize(H);
+    for(int i=0;i<H;i++)
+        mat[i].resize(W);
+    N=H*W;
+    ST.init();
+    for(int i=0;i<H*W;i++){
+        mat[R[i]][C[i]]=i;
+        r.pb(R[i]);
+        c.pb(C[i]);
+    }
+    for(int i=0;i<H;i++)
+    {
+        for(int j=0;j<W;j++)
+        {
+            int tr=mat[i][j];
+            //printf("%i\n",tr);
+            int up=get(i-1,j);
+            int down=get(i+1,j);
+            int left=get(i,j-1);
+            int right=get(i,j+1);
+            //printf("%i %i %i %i\n",up,down,left,right);
+            int tr2=(get(i-1,j-1)<tr)+(up<tr)+(left<tr);
+            if(tr2==0)
+            {
+                ST.nope(tr,min((int)get(i-1,j-1),min(up,left))-1,1,0);
+            }
+            if(tr2==2)
+            {
+                ST.nope(tr,max((int)get(i-1,j-1),max(up,left))-1,1,1);
+            }
+            tr2=(get(i-1,j+1)<tr)+(up<tr)+(right<tr);
+            if(tr2==0)
+            {
+                ST.nope(tr,min((int)get(i-1,j+1),min(up,right))-1,1,0);
+            }
+            if(tr2==2)
+            {
+                ST.nope(tr,max((int)get(i-1,j+1),max(up,right))-1,1,1);
+            }
+            tr2=(get(i+1,j+1)<tr)+(down<tr)+(right<tr);
+            if(tr2==0)
+            {
+                ST.nope(tr,min((int)get(i+1,j+1),min(down,right))-1,1,0);
+            }
+            if(tr2==2)
+            {
+                ST.nope(tr,max((int)get(i+1,j+1),max(down,right))-1,1,1);
+            }
+            tr2=(get(i+1,j-1)<tr)+(down<tr)+(left<tr);
+            if(tr2==0)
+            {
+                ST.nope(tr,min((int)get(i+1,j-1),min(down,left))-1,1,0);
+            }
+            if(tr2==2)
+            {
+                ST.nope(tr,max((int)get(i+1,j-1),max(down,left))-1,1,1);
+            }
+        }
+    }
+    ST.update_all();
+    /*for(int i=-1;i<H;i++)
+        for(int j=-1;j<W;j++)
+            update(i,j,1);*/
+    //printf("%i\n",ST.get());
+}
+int swap_seats(int a, int b) {
+    //printf("%i %i  %i %i\n",r[a],c[a],r[b],c[b]);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[a]+i,c[a]+j,-1);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[b]+i,c[b]+j,-1);
+    //printf("Cmon!\n");
+    swap(mat[r[a]][c[a]],mat[r[b]][c[b]]);
+    swap(r[a],r[b]);
+    swap(c[a],c[b]);
+    /*for(int i=0;i<h;i++)
+    {
+        for(int j=0;j<w;j++)
+            printf("%i ",mat[i][j]);
+        printf("\n");
+    }*/
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[a]+i,c[a]+j,1);
+    for(int i=-1;i<=0;i++)
+        for(int j=-1;j<=0;j++)
+            update(r[b]+i,c[b]+j,1);
+    return ST.get();
+}
