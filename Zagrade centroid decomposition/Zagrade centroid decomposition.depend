@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1543527730 source:c:\users\nikip\desktop\onedrive\programming practice\zagrade centroid decomposition\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
+1543525805 source:c:\users\nikip\onedrive\programming practice\zagrade centroid decomposition\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+

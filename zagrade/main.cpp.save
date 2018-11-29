@@ -1,0 +1,297 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
+	os << '{';
+	for(int i=0;i<sz(a);i++)
+	{
+		if(i>0&&i<sz(a)-1)
+			os << ", ";
+		os << a[i];
+	}
+	os << '}';
+    return os;
+}
+const int N=3e5+5;
+ll cnt=0;
+int sta[N];
+int sz[N];
+vector<vector<int> > graf(N);
+void dfs(int tr,int par)
+{
+    sz[tr]=1;
+    for(auto p:graf[tr])
+    {
+        if(p==par)
+            continue;
+        dfs(p,tr);
+        sz[tr]+=sz[p];
+    }
+}
+int ins=0,ers=0;
+struct str{
+    set<pair<int,int> > set1;
+    int delta;
+    void insert(int i,int p=1)
+    {
+        ins++;
+        i-=delta;
+        if(set1.lower_bound({i,0})==set1.end())
+        {
+            set1.insert({i,p});
+            return;
+        }
+        pair<int,int> a=*set1.lower_bound({i,0});
+        if(a.first==i)
+        {
+            set1.erase(a);
+            a.second+=p;
+            set1.insert(a);
+        }
+        else
+        {
+            set1.insert({i,p});
+        }
+    }
+    int count(int i)
+    {
+        i-=delta;
+        if(set1.lower_bound({i,0})==set1.end())
+            return 0;
+        pair<int,int> a=*set1.lower_bound({i,0});
+        if(a.first==i)
+            return a.second;
+        return 0;
+    }
+    int size()
+    {
+        return set1.size();
+    }
+    void erase(int i,int p=1)
+    {
+        i-=delta;
+        pair<int,int> a=*set1.lower_bound({i,0});
+        if(a.first==i)
+        {
+            set1.erase(a);
+            a.second-=p;
+            if(a.second>0)
+                set1.insert(a);
+        }
+        else
+        {
+            assert(0);
+        }
+        ers++;
+    }
+    int erase()
+    {
+        int obr=0;
+        int c=0;
+        while(set1.size()&&(*set1.begin()).first+delta<0){
+            assert((*set1.begin()).first+delta==-1);
+            obr=((*set1.begin()).second);
+            set1.erase(set1.begin());
+            assert(c==0);
+            c++;
+        }
+        return obr;
+    }
+    vector<pair<int,int> > all_elements()
+    {
+        vector<pair<int,int> > al;
+        for(auto p:set1)
+        {
+            al.pb(mp(p.first+delta,p.second));
+        }
+        return al;
+    }
+} e;
+vector<str> pocetak,kraj;
+vector<int> poc,krj;
+pair<int,int> solve(int tr,int par)
+{
+    if(tr%100==0){
+    printf("%i %i %i %i  %i %i\n",tr,par,poc.size(),krj.size(),ins,ers);
+    int sum=0;
+    for(auto p:poc)
+        sum+=pocetak[p].size();
+    printf("%i\n",sum);
+    sum=0;
+    for(auto p:krj)
+        sum+=kraj[p].size();
+    printf("krj: %i\n",sum);
+    }
+    //printf("%i: %lld\n",tr,cnt);
+    if(graf[tr].size()==1&&tr!=0)
+    {
+        //printf("Usao!\n");
+        if(sta[tr]==0)
+            for(auto p:krj)
+                cnt+=kraj[p].count(1);
+        else
+            for(auto p:poc)
+                cnt+=pocetak[p].count(1);
+        pocetak.pb(e);
+        kraj.pb(e);
+        if(sta[tr]==0)
+            pocetak.back().insert(1);
+        else
+            kraj.back().insert(1);
+        return mp(pocetak.size()-1,kraj.size()-1);
+    }
+    vector<int> obr;
+    if(sta[tr]==0)
+    {
+        for(auto p:krj)
+            cnt+=kraj[p].count(1);
+        for(auto p:krj)
+            kraj[p].delta--;
+        for(auto p:poc)
+            pocetak[p].delta++;
+        for(int i=0;i<krj.size();i++)
+            obr.pb(kraj[krj[i]].erase());
+    }
+    else
+    {
+        for(auto p:poc)
+            cnt+=pocetak[p].count(1);
+        for(auto p:krj)
+            kraj[p].delta++;
+        for(auto p:poc)
+            pocetak[p].delta--;
+        for(int i=0;i<poc.size();i++)
+            obr.pb(pocetak[poc[i]].erase());
+    }
+    //printf("Prosao!\n");
+    vector<pair<int,int> > ind;
+    for(auto p:graf[tr])
+    {
+        if(p==par)
+            continue;
+        ind.pb({sz[p],p});
+    }
+    sort(ind.begin(),ind.end());
+    vector<int> dodao,dodaok;
+    for(int i=0;i<(int)ind.size()-1;i++)
+    {
+        pair<int,int> tren=solve(ind[i].second,tr);
+        //printf("%i: %i %i %i\n",tr,tren.first,tren.second,ind.size());
+        if(sta[tr]==0)
+        {
+            cnt+=kraj[tren.second].count(1);
+            pocetak[tren.first].delta++;
+            kraj[tren.second].delta--;
+            kraj[tren.second].erase();
+        }
+        else
+        {
+            cnt+=pocetak[tren.first].count(1);
+            pocetak[tren.first].delta--;
+            kraj[tren.second].delta++;
+            pocetak[tren.first].erase();
+        }
+        poc.pb(tren.first);
+        dodao.pb(tren.first);
+        krj.pb(tren.second);
+        dodaok.pb(tren.second);
+    }
+    pair<int,int> tren=solve(ind[ind.size()-1].second,tr);
+    if(sta[tr]==0)
+    {
+        cnt+=kraj[tren.second].count(1);
+        pocetak[tren.first].delta++;
+        kraj[tren.second].delta--;
+        kraj[tren.second].erase();
+        pocetak[tren.first].insert(1);
+    }
+    else
+    {
+        cnt+=pocetak[tren.first].count(1);
+        pocetak[tren.first].delta--;
+        kraj[tren.second].delta++;
+        pocetak[tren.first].erase();
+        kraj[tren.second].insert(1);
+    }
+    for(auto p:dodao)
+    {
+        for(auto d:pocetak[p].all_elements())
+            pocetak[tren.first].insert(d.first,d.second);
+        poc.pop_back();
+    }
+    for(auto p:dodaok)
+    {
+        for(auto d:kraj[p].all_elements())
+            kraj[tren.second].insert(d.first,d.second);
+        krj.pop_back();
+    } 
+    if(sta[tr]==0)
+    {
+        for(int i=0;i<krj.size();i++)
+            if(obr[i])
+                kraj[krj[i]].insert(-1,obr[i]);
+        for(auto p:krj)
+            kraj[p].delta++;
+        for(auto p:poc)
+            pocetak[p].delta--;
+    }
+    else
+    {
+        for(int i=0;i<poc.size();i++)
+            if(obr[i])
+                pocetak[poc[i]].insert(-1,obr[i]);
+        for(auto p:krj)
+            kraj[p].delta--;
+        for(auto p:poc)
+            pocetak[p].delta++;
+    }
+    return tren;
+}
+int main()
+{
+    FILE *f;
+    f=fopen("zagrade.in.3f","r");
+    e.set1.clear();
+    e.delta=0;
+    int n;
+    fscanf(f,"%i",&n);
+    printf("%i\n",n);
+    //scanf("%i",&n);
+    string s;
+    char cc[n];
+    fscanf(f,"%s",cc);
+    s=cc;
+    //cin >> s;
+    printf("Uradio!\n");
+    for(int i=0;i<n;i++)
+    {
+        sta[i]=s[i]==')';
+    }
+    for(int i=1;i<n;i++)
+    {
+        int x,y;
+        fscanf(f,"%i %i",&x,&y);
+       // scanf("%i %i",&x,&y);
+        x--;
+        y--;
+        graf[x].pb(y);
+        graf[y].pb(x);
+    }
+    solve(rand()%n,-1);
+    printf("%lld\n",cnt);
+    return 0;
+}
