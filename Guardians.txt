@@ -1,0 +1,4 @@
+Divide and conquer l*g*log l:
+https://github.com/nikolapesic2802/Programming-Practice/blob/master/Guardians%20of%20the%20lunatics/main.cpp
+Knuth l*g:
+https://github.com/nikolapesic2802/Programming-Practice/blob/master/Guardians%20of%20the%20lunatics%20knuth/main.cpp
