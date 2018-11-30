@@ -56,16 +56,25 @@ int main()
         mid[g+1][i]=i;
     }
     for(int i=2;i<=g;i++)
+<<<<<<< HEAD
+        for(int w=1;w<=l;w++)
+            dp[i][w]=inf;
+=======
     {
         for(int w=1;w<=l;w++)
             dp[i][w]=inf;
     }
+>>>>>>> 3db3e0bfa5fb7865875aa6cd7501066a97af70d5
     for(int d=0;d<=l;d++){
         for(int h=1;h+d<=l&&h<=g;h++)
         {
            if(d==0)
            {
+<<<<<<< HEAD
+               mid[h][h]=h;
+=======
                mid[h][h]=1;
+>>>>>>> 3db3e0bfa5fb7865875aa6cd7501066a97af70d5
                dp[h][h]=sum[h];
                continue;
            }
