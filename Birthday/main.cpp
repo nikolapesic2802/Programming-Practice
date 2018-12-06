@@ -1,7 +1,7 @@
 /*
     -Binary search for the answer. To test if we can solve the problem for a given value, we need to find for every element by how much we need to shift the permutation in order to make the current
     element not move by more than mid steps. So it becomes a problem of checking if all intervals have a common interval.
-    -It is really hard to make this n log n solution pass but this one passes with some ifs for special cases(If there were cases where N=1e6 and in one it was optimal not to take the original
+    -It is really hard to make this n log n solution pass on time but this one passes with some ifs for special cases(If there were cases where N=1e6 and in one it was optimal not to take the original
                                                                                                               ordering of the permutation, but the reversed one. I wouldn't have been able to solve it)
 */
 #include <bits/stdc++.h>
