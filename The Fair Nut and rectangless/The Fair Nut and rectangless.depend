@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1544642036 source:c:\users\nikip\desktop\onedrive\codeforces\the fair nut and rectangless\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
