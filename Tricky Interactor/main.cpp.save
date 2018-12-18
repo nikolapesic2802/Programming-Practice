@@ -1,0 +1,137 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
+	os << '{';
+	for(int i=0;i<sz(a);i++)
+	{
+		if(i>0&&i<sz(a)-1)
+			os << ", ";
+		os << a[i];
+	}
+	os << '}';
+    return os;
+}
+int ask(int poz)
+{
+    printf("? %i %i\n",poz,poz);
+    fflush(stdout);
+    int a;
+    scanf("%i",&a);
+    if(a==-1)
+    {
+        exit(0);
+    }
+    return a;
+}
+const int N=305;
+struct segTree{
+    vector<int> lazy;
+    void init()
+    {
+        lazy.resize(4*N);
+    }
+    void add(int qs,int qe,int l=0,int r=N,int i=1)
+    {
+        if(qs>r||qe<l)
+            return;
+        if(qs<=l&&qe>=r)
+        {
+            lazy[i]++;
+            return;
+        }
+        lazy[2*i]+=lazy[i];
+        lazy[2*i+1]+=lazy[i];
+        lazy[i]=0;
+        int m=(l+r)>>1;
+        add(qs,qe,l,m,2*i);
+        add(qs,qe,m+1,r,2*i+1);
+    }
+    int get(int poz,int l=0,int r=N,int i=1)
+    {
+        if(l>poz||r<poz)
+            return 0;
+        if(l==r&&l==poz)
+            return lazy[i];
+        lazy[2*i]+=lazy[i];
+        lazy[2*i+1]+=lazy[i];
+        lazy[i]=0;
+        int m=(l+r)>>1;
+        return get(poz,l,m,2*i)+get(poz,m+1,r,2*i+1);
+    }
+};
+int main()
+{
+    segTree st;
+    st.init();
+	int n,t;
+	scanf("%i %i",&n,&t);
+	int desno=t,levo=0;
+	int l1=0,l2=n;
+	vector<int> niz(n+1);
+	for(int poz=1;poz<=n;poz++)
+    {
+        int pos1=l2-desno+levo;
+        int pos_jedan=l1-levo+desno+1;
+        int pos_nula=l1-levo+desno-1;
+        //printf("%i %i  %i %i  %i %i %i\n",desno,l2,levo,l1,pos1,pos_jedan,pos_nula);
+        //assert(pos1!=pos_jedan&&pos1!=pos_nula);
+        int next=ask(poz);
+        while(next==pos1){
+            st.add(poz,n);
+            desno=l2-desno;
+            pos1=l2-desno+levo;
+            pos_jedan=l1-levo+desno+1;
+            pos_nula=l1-levo+desno-1;
+            //printf("%i %i  %i %i  %i %i %i\n",desno,l2,levo,l1,pos1,pos_jedan,pos_nula);
+            assert(pos1!=pos_jedan&&pos1!=pos_nula);
+            next=ask(poz);
+        }
+        st.add(1,poz);
+        levo=l1-levo;
+        if(next==pos_jedan)
+        {
+            if(st.get(poz)%2==0)
+                niz[poz]=1;
+            else
+                niz[poz]=0;
+            l1++;
+            l2--;
+            levo++;
+        }
+        else
+        {
+            if(st.get(poz)%2==0)
+                niz[poz]=0;
+            else
+                niz[poz]=1;
+            l1++;
+            l2--;
+            desno--;
+        }
+    }
+    string ans;
+    for(int i=1;i<=n;i++)
+    {
+        //printf("%i\n",niz[i]);
+        ans+=niz[i]+'0';
+    }
+    cout << "! " << ans;
+    return 0;
+}
