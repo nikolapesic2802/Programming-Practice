@@ -1,3 +1,6 @@
+/*
+    - https://codeforces.com/blog/entry/17717?#comment-226989
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -84,6 +87,7 @@ int main()
     priority_queue<pair<int,int>,vector<pair<int,int> >,greater<pair<int,int>> > q;
     q.push({0,start});
     fill(done.begin(),done.end(),INT_MAX);
+    done[start]=0;
     while(!q.empty())
     {
         int pos=q.top().second;
