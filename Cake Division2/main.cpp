@@ -49,24 +49,24 @@ int nxt(int tr)
         return 0;
     return tr+1;
 }
-ll calc(int l,int r,int potez)
+ll calc(int l,int r,int move)
 {
-    if(dp[l][r][potez]!=-1)
-        return dp[l][r][potez];
-    if(potez==0)
+    if(dp[l][r][move]!=-1)
+        return dp[l][r][move];
+    if(move==0)
     {
         if(l==r)
-            return dp[l][r][potez]=0;
+            return dp[l][r][move]=0;
         if(cakes[l]>cakes[r])
-            return dp[l][r][potez]=calc(prev(l),r,1);
+            return dp[l][r][move]=calc(prev(l),r,1);
         else
-            return dp[l][r][potez]=calc(l,nxt(r),1);
+            return dp[l][r][move]=calc(l,nxt(r),1);
     }
     else
     {
         if(l==r)
-            return dp[l][r][potez]=cakes[l];
-        return dp[l][r][potez]=max((ll)calc(prev(l),r,0)+cakes[l],(ll)calc(l,nxt(r),0)+cakes[r]);
+            return dp[l][r][move]=cakes[l];
+        return dp[l][r][move]=max((ll)calc(prev(l),r,0)+cakes[l],(ll)calc(l,nxt(r),0)+cakes[r]);
     }
 }
 int main()
