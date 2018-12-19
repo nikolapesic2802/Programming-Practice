@@ -1,5 +1,5 @@
 /*
-    -Just write a dp[l][r][move] l and r being the borders of the taken interval and move being whose move is it(this move dimension is not required since r-l+1 will be odd for the first player and even for the second one, but it was easier to write this way.
+    -Just write a dp[l][r][move] l and r being the borders of the taken interval and move being whose move is it(this move dimension is not required since r-l+1 will be odd for the first player and even for the second one, but it was easier to write this way).
     -Really simple to figure out the transitions.
     -Just try taking every cake as the first cake and take the maximum of those.
 */
