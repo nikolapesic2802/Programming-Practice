@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1545230944 source:c:\users\nikip\onedrive\programming practice\cake division2\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+

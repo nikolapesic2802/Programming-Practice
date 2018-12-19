@@ -1,0 +1,60 @@
+/*
+    -For every segment mark the edges that we go through and for each edge decide if its better to buy paper or the other tickets.
+*/
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
+	os << '{';
+	for(int i=0;i<sz(a);i++)
+	{
+		if(i>0&&i<sz(a))
+			os << ", ";
+		os << a[i];
+	}
+	os << '}';
+    return os;
+}
+int main()
+{
+    int n,m;
+    scanf("%i %i",&n,&m);
+    vector<int> dest(m);
+    vector<int> delta(n+1),a(n),b(n),c(n);
+    for(int i=0;i<m;i++)
+        scanf("%i",&dest[i]);
+    for(int i=1;i<m;i++)
+    {
+        int x=min(dest[i],dest[i-1]),y=max(dest[i],dest[i-1]);
+        x--;
+        y--;
+        delta[x]++;
+        delta[y]--;
+    }
+    ll sum=0;
+    for(int i=0;i<n-1;i++)
+    {
+        scanf("%i %i %i",&a[i],&b[i],&c[i]);
+        if(i>0)
+            delta[i]+=delta[i-1];
+        sum+=min((ll)a[i]*delta[i],c[i]+(ll)b[i]*delta[i]);
+    }
+    printf("%lld\n",sum);
+    return 0;
+}
