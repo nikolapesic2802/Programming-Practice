@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -57,6 +58,15 @@ vector<int> ask(int i) {
 #include "prize.h"
 using namespace std;
 */
+=======
+/*
+	-http://ioi2017.org/tasks/editorial/prize.pdf , https://github.com/timpostuvan/CompetitiveProgramming/blob/master/Olympiad/IOI/Prize2017.cpp
+*/
+#include <bits/stdc++.h>
+#include "prize.h"
+using namespace std;
+
+>>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
 const int N=2e5+5;
 map<int,vector<int> > mapa[N];
 int sol=-1;
@@ -73,6 +83,7 @@ void solve(int l,int r)
         return;
     }
     int left=1,right=1;
+<<<<<<< HEAD
 
     auto it=mapa[sum].upper_bound(m);
     if(it!=mapa[sum].begin()&&mapa[sum].size())
@@ -82,23 +93,33 @@ void solve(int l,int r)
             left=0;
         it++;
     }
+=======
+    auto it=mapa[sum].upper_bound(m);
+>>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     if(it!=mapa[sum].end())
     {
         if((*it).second[0]==cur[0])
             right=0;
     }
+<<<<<<< HEAD
     /*if(it!=mapa[sum].end())
     {
         if((*it).second[0]==cur[0])
             right=0;
     }
+=======
+>>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     if(it!=mapa[sum].begin())
         it--;
     if(it!=mapa[sum].begin())
     {
         if((*it).second[1]==cur[1])
             left=0;
+<<<<<<< HEAD
     }*/
+=======
+    }
+>>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     mapa[sum][m]=cur;
     if(left)
         solve(l,m-1);
@@ -108,6 +129,7 @@ void solve(int l,int r)
 int find_best(int n) {
     solve(0,n-1);
     return sol;
+<<<<<<< HEAD
 }
 
 int main() {
@@ -142,3 +164,6 @@ int main() {
 
 	return 0;
 }
+=======
+}
+>>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
