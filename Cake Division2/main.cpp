@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
     -Just write a dp[l][r][move] l and r being the borders of the taken interval and move being whose move is it(this move dimension is not required since r-l+1 will be odd for the first player and even for the second one, but it was easier to write this way.
-=======
-    -Just write a dp[l][r][move] l and r being the borders of the taken interval and move being whose move is it(this move dimension is not required since r-l+1 will be odd for the first player and even for the second one, but it was easier to write this way).
->>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     -Really simple to figure out the transitions.
     -Just try taking every cake as the first cake and take the maximum of those.
 */
@@ -53,20 +49,6 @@ int nxt(int tr)
         return 0;
     return tr+1;
 }
-<<<<<<< HEAD
-ll calc(int l,int r,int potez)
-{
-    if(dp[l][r][potez]!=-1)
-        return dp[l][r][potez];
-    if(potez==0)
-    {
-        if(l==r)
-            return dp[l][r][potez]=0;
-        if(cakes[l]>cakes[r])
-            return dp[l][r][potez]=calc(prev(l),r,1);
-        else
-            return dp[l][r][potez]=calc(l,nxt(r),1);
-=======
 ll calc(int l,int r,int move)
 {
     if(dp[l][r][move]!=-1)
@@ -79,18 +61,12 @@ ll calc(int l,int r,int move)
             return dp[l][r][move]=calc(prev(l),r,1);
         else
             return dp[l][r][move]=calc(l,nxt(r),1);
->>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     }
     else
     {
         if(l==r)
-<<<<<<< HEAD
-            return dp[l][r][potez]=cakes[l];
-        return dp[l][r][potez]=max((ll)calc(prev(l),r,0)+cakes[l],(ll)calc(l,nxt(r),0)+cakes[r]);
-=======
             return dp[l][r][move]=cakes[l];
         return dp[l][r][move]=max((ll)calc(prev(l),r,0)+cakes[l],(ll)calc(l,nxt(r),0)+cakes[r]);
->>>>>>> 9474051d178f5be8b497f4ee169757a088fe6e70
     }
 }
 int main()
