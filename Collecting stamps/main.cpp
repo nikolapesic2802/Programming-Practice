@@ -77,7 +77,7 @@ int main()
         ll add=(ll)prefixJ[i]*(prefixI[n+1]-prefixI[i]);
         add=max(add,vrednost[i]);
         add=max(add,vr[i]);
-        maxx=max(maxx,add);
+        maxx=max(maxx,add);z
     }
     printf("%lld\n",best+maxx);
     return 0;
