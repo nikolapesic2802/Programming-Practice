@@ -63,38 +63,38 @@ int check(int p,int q,int h)
     {
         for(int j=0;j<q;j++)
         {
-            vector<pair<int,int> > siz;
+            vector<pair<int,int> > stk;
             int last=-1;
             vector<int> napred(h);
             for(int k=0;k<h;k++)
             {
                 if(dp[i][j][k]>last)
                 {
-                    siz.pb({last,k-1});
+                    stk.pb({last,k-1});
                 }
                 if(dp[i][j][k]<last)
                 {
-                    while(siz.back().first>=dp[i][j][k])
-                        siz.pop_back();
+                    while(stk.back().first>=dp[i][j][k])
+                        stk.pop_back();
                 }
                 last=dp[i][j][k];
-                napred[k]=siz.back().second;
+                napred[k]=stk.back().second;
             }
-            siz.clear();
+            stk.clear();
             last=-1;
             for(int k=h-1;k>=0;k--)
             {
                 if(dp[i][j][k]>last)
                 {
-                    siz.pb({last,k+1});
+                    stk.pb({last,k+1});
                 }
                 if(dp[i][j][k]<last)
                 {
-                    while(siz.back().first>dp[i][j][k])
-                        siz.pop_back();
+                    while(stk.back().first>dp[i][j][k])
+                        stk.pop_back();
                 }
                 last=dp[i][j][k];
-                int mesto=siz.back().second-napred[k]-1;
+                int mesto=stk.back().second-napred[k]-1;
                 sol=max(sol,dp[i][j][k]*4*mesto);
             }
         }
