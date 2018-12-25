@@ -1,3 +1,7 @@
+/*
+    -idea for dp taken from: https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/Baltic/official/boi2009_solutions/monument-sol.pdf
+    -I used a trick with a stack to calculate the first element smaller than the current one before it and after it in an array in O(n) (not directly .
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -29,104 +33,69 @@ template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
     return os;
 }
 const int N=150;
-vector<int> initt;
-struct segTree{
-    vector<int> minn;
-    void update(int i)
-    {
-        minn[i]=min(minn[2*i],minn[2*i+1]);
-    }
-    void build(int i=1,int l=0,int r=N-1)
-    {
-        if(l==r)
-        {
-            minn[i]=initt[l];
-            return;
-        }
-        int m=(l+r)>>1;
-        build(2*i,l,m);
-        build(2*i+1,m+1,r);
-        update(i);
-    }
-    void init()
-    {
-        minn.resize(4*N);
-        build();
-    }
-    int gett(int qs,int qe,int i=1,int l=0,int r=N-1)
-    {
-        if(l>qe||r<qs)
-            return INT_MAX;
-        if(qs<=l&&qe>=r)
-            return minn[i];
-        int m=(l+r)>>1;
-        return min(gett(qs,qe,2*i,l,m),gett(qs,qe,2*i+1,m+1,r));
-    }
-};
 vector<vector<vector<int> > > matrix(N,vector<vector<int> > (N,vector<int> (N))),matrix2(N,vector<vector<int> > (N,vector<int> (N)));
 int check(int p,int q,int h)
 {
-    int possible[p][q];
-    for(int i=0;i<p;i++)
+    vector<vector<vector<int> > > dp(N,vector<vector<int> > (N,vector<int> (N)));
+    for(int k=0;k<h;k++)
     {
-        for(int j=0;j<q;j++)
+        for(int i=0;i<p;i++)
         {
-            int dep=0;
-            for(int k=0;k<h;k++)
+            for(int j=0;j<q;j++)
             {
-                if(matrix[i][j][k]==1)
+                if(i==0||j==0)
                 {
-                    dep++;
+                    if(matrix[i][j][k]==1)
+                        dp[i][j][k]=1;
                 }
                 else
                 {
-                    break;
+                    if(matrix[i][j][k]==1)
+                    {
+                        dp[i][j][k]=min(dp[i-1][j][k],min(dp[i][j-1][k],dp[i-1][j-1][k]))+1;
+                    }
                 }
             }
-            possible[i][j]=dep;
-            //printf("possible[%i][%i]: %i\n",i,j,dep);
         }
-    }
-    vector<segTree> hor(q),ver(p);
-    //printf("HOR!\n");
-    for(int i=0;i<q;i++)
-    {
-        initt.clear();
-        for(int j=0;j<p;j++)
-        {
-            initt.pb(possible[j][i]);
-        }
-        cout << initt << endl;
-        hor[i].init();
-    }
-    //printf("VER!\n");
-    for(int i=0;i<p;i++)
-    {
-        initt.clear();
-        for(int j=0;j<q;j++)
-        {
-            initt.pb(possible[i][j]);
-        }
-        cout << initt << endl;
-        ver[i].init();
     }
     int sol=0;
     for(int i=0;i<p;i++)
     {
         for(int j=0;j<q;j++)
         {
-            //printf("Pokusavam %i %i\n",i,j);
-            int minn=INT_MAX;
-            for(int k=0;k<min(p-i,q-j);k++)
+            vector<pair<int,int> > siz;
+            int last=-1;
+            vector<int> napred(h);
+            for(int k=0;k<h;k++)
             {
-                int a1=hor[j+k].gett(i,i+k);
-                int a2=ver[i+k].gett(j,j+k);
-                //printf("Za kvadrat %i: %i %i\n",k,a1,a2);
-                minn=min(minn,a1);
-                minn=min(minn,a2);
-                if(minn==0)
-                    break;
-                sol=max(sol,4*(k+1)*minn);
+                if(dp[i][j][k]>last)
+                {
+                    siz.pb({last,k-1});
+                }
+                if(dp[i][j][k]<last)
+                {
+                    while(siz.back().first>=dp[i][j][k])
+                        siz.pop_back();
+                }
+                last=dp[i][j][k];
+                napred[k]=siz.back().second;
+            }
+            siz.clear();
+            last=-1;
+            for(int k=h-1;k>=0;k--)
+            {
+                if(dp[i][j][k]>last)
+                {
+                    siz.pb({last,k+1});
+                }
+                if(dp[i][j][k]<last)
+                {
+                    while(siz.back().first>dp[i][j][k])
+                        siz.pop_back();
+                }
+                last=dp[i][j][k];
+                int mesto=siz.back().second-napred[k]-1;
+                sol=max(sol,dp[i][j][k]*4*mesto);
             }
         }
     }
@@ -138,6 +107,7 @@ int main()
     cin.tie(NULL);
 	int p,q,h;
 	cin >> p >> q >> h;
+	swap(p,q);
 	for(int i=0;i<p;i++)
     {
         for(int j=0;j<q;j++)
@@ -152,14 +122,6 @@ int main()
         }
     }
     int sol=check(p,q,h);
-    for(int i=0;i<p;i++)
-    {
-        for(int j=0;j<q;j++)
-        {
-            reverse(all(matrix[i][j]));
-        }
-    }
-    sol=max(sol,check(p,q,h));
     for(int i=0;i<p;i++)
     {
         for(int j=0;j<q;j++)
