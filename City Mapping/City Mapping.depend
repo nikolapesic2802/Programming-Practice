@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1514996276 source:c:\users\nikip\desktop\onedrive\programming practice\city mapping\grader.cpp
+	"citymapping.h"
+	<bits/stdc++.h>
+
+1514918126 c:\users\nikip\desktop\onedrive\programming practice\city mapping\citymapping.h
+
+1546192078 source:c:\users\nikip\desktop\onedrive\programming practice\city mapping\citymapping.cpp
+	"citymapping.h"
+	<bits/stdc++.h>
+
