@@ -1,7 +1,7 @@
 /*
     -First greedily take the cities with the highest Ai for every music school.
     -Then go through every sport school and see if its better to take a city that hasn't been taken already or to take some city that has been chosen for music and take a new city for music.
-    -We can do this by maintaining multisets for already taken and not taken cities.
+    -We can do this by maintaining multisets for already taken (by taken i mean cities taken ONLY for music schools, we don't care about the ones taken for sports schools) and not taken cities.
     -For the case where we take a city that hasn't already been taken, we just need to take a not taken city with the highest value of Bi.
     -For the case where we take a taken city, we find a taken city with the highest value of Bi-Ai lets say it has values (a1,b1) and take a not taken city with the highest value of Ai(a2,b2), we need to add a2-a1+b1 (from this formula we can see why we need a taken city with the highest Bi-Ai) to the solution.
     -For every sports school we choose the better of these 2 cases and update the sets according to what we chose.
