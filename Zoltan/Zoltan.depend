@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1546457108 source:c:\users\nikip\desktop\onedrive\programming practice\zoltan\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
+1546534065 source:c:\users\nikip\onedrive\programming practice\zoltan\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+

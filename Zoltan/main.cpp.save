@@ -1,0 +1,280 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
+	os << '{';
+	for(int i=0;i<sz(a);i++)
+	{
+		if(i>0&&i<sz(a))
+			os << ", ";
+		os << a[i];
+	}
+	os << '}';
+    return os;
+}
+struct node{
+    int l;
+    int r;
+    int best;
+    int num;
+    ll sum;
+    node* left;
+    node* right;
+    node(int le,int ri)
+    {
+        l=le;
+        r=ri;
+        best=0;
+        sum=0;
+        num=1;
+        left=right=NULL;
+    }
+    void extend()
+    {
+        if(left!=NULL)
+            return;
+        int m=(l+r)>>1;
+        left=new node(l,m);
+        right=new node(m+1,r);
+    }
+    void prop()
+    {
+        if(best==0)
+            return;
+        if(left->best==best)
+        {
+            left->sum+=sum;
+            left->num+=num;
+        }
+        if(left->best<best)
+        {
+            left->sum=sum;
+            left->best=best;
+            left->num=num;
+        }
+        if(right->best==best)
+        {
+            right->sum+=sum;
+            right->num+=num;
+        }
+        if(right->best<best)
+        {
+            right->sum=sum;
+            right->best=best;
+            right->num=num;
+        }
+        sum=0;
+        best=0;
+        num=0;
+    }
+    void add(int qs,int qe,int b,ll s,int n)
+    {
+        if(qs>r||qe<l)
+            return;
+        if(qs<=l&&qe>=r)
+        {
+            if(b==best)
+            {
+                sum+=s;
+                num+=n;
+            }
+            if(b>best)
+            {
+                best=b;
+                sum=s;
+                num=n;
+            }
+            return;
+        }
+        extend();
+        prop();
+        left->add(qs,qe,b,s,n);
+        right->add(qs,qe,b,s,n);
+    }
+    tuple<int,int,ll> get(int pos)
+    {
+        if(l==r)
+            return make_tuple(best,num,sum);
+        if(left==NULL)
+            return make_tuple(best,num,sum);
+        extend();
+        prop();
+        int m=(l+r)>>1;
+        if(pos<=m)
+            return left->get(pos);
+        return right->get(pos);
+    }
+};
+int main()
+{
+    int n;
+	scanf("%i",&n);
+	vector<int> niz(n);
+	for(int i=0;i<n;i++)
+        scanf("%i",&niz[i]);
+    deque<int> q;
+    q.pb(niz[0]);
+    int minn=niz[0],maxx=niz[0];
+    for(int i=1;i<n;i++)
+    {
+        if(niz[i]<minn)
+        {
+            minn=niz[i];
+            q.push_front(niz[i]);
+            continue;
+        }
+        if(niz[i]>maxx)
+        {
+            maxx=niz[i];
+            q.push_back(niz[i]);
+            continue;
+        }
+        node f(0,1e9);
+        int be=0;
+        ll s=0;
+        int nu=0;
+        vector<pair<ll,ll> > ends;
+        for(auto p:q)
+        {
+            int best,num;
+            ll sum;
+            tie(best,num,sum)=f.get(p);
+            best++;
+            sum+=(ll)num*p;
+            f.add(p+1,1e9,best,sum,num);
+            if(be==best)
+                s+=sum,nu+=num,ends.pb({p,num});
+            if(be<best)
+            {
+                ends.clear();
+                be=best;
+                s=sum;
+                nu=num;
+                ends.pb({p,num});
+            }
+        }
+        for(int j=i;j<n;j++)
+        {
+            int p=niz[j];
+            int best,num;
+            ll sum;
+            tie(best,num,sum)=f.get(p);
+            best++;
+            sum+=(ll)num*p;
+            f.add(p+1,1e9,best,sum,num);
+            if(be==best)
+                s+=sum,nu+=num;
+            if(be<best)
+            {
+                ends.clear();
+                be=best;
+                s=sum;
+                nu=num;
+            }
+        }
+        node b(0,1e9);
+        for(int j=n-1;j>=i;j--)
+        {
+            int p=niz[j];
+            int best,num;
+            ll sum;
+            tie(best,num,sum)=b.get(p);
+            best++;
+            sum+=(ll)num*p;
+            b.add(p+1,1e9,best,sum,num);
+            if(be==best)
+                s+=sum,nu+=num;
+            if(be<best)
+            {
+                be=best;
+                s=sum;
+                nu=num;
+            }
+        }
+        for(auto p:q)
+        {
+            int best,num;
+            ll sum;
+            tie(best,num,sum)=b.get(p);
+            best++;
+            sum+=(ll)num*p;
+            b.add(p+1,1e9,best,sum,num);
+            if(be==best)
+                s+=sum,nu+=num;
+            if(be<best)
+            {
+                be=best;
+                s=sum;
+                nu=num;
+            }
+        }
+        printf("%i %i\n",be,nu);
+        return 0;
+    }
+    printf("%i %i\n",n,1);
+    return 0;
+
+
+
+
+
+    node f(0,1e9),b(0,1e9);
+    int be=0;
+    ll s=0;
+    int nu=0;
+    for(int i=0;i<n;i++)
+    {
+        int best,num;
+        ll sum;
+        tie(best,num,sum)=f.get(niz[i]);
+        best++;
+        sum+=(ll)num*niz[i];
+        f.add(niz[i]+1,1e9,best,sum,num);
+        if(be==best)
+            s+=sum,nu+=num;
+        if(be<best)
+        {
+            be=best;
+            s=sum;
+            nu=num;
+        }
+    }
+    printf("%i %i %lld\n",be,nu,s);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
