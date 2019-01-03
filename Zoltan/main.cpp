@@ -1,353 +1,132 @@
+/*
+    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/COCI/official/2017/contest3_solutions/solutions.pdf
+*/
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/rope>
-
+ 
 #define ll long long
 #define pb push_back
-#define sz(x) (int)(x).size()
 #define mp make_pair
 #define f first
+#define s second
 #define all(x) x.begin(), x.end()
-
+ 
 using namespace std;
-using namespace __gnu_pbds;
-using namespace __gnu_cxx;
-
-template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
-template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
-template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
-	os << '{';
-	for(int i=0;i<sz(a);i++)
-	{
-		if(i>0&&i<sz(a))
-			os << ", ";
-		os << a[i];
-	}
-	os << '}';
-    return os;
-}
-void test()
+ 
+const int mod=1e9+7;
+int add(int a,int b)
 {
-    int k;
-    cin >> k;
-    string s1,a1,b1;
-    cin >> s1 >> a1 >> b1;
-    int temp[k];
-    bool taken[k];
-    for(int i=0;i<k;i++)
-        temp[i]=-1,taken[i]=false;
-    int n=s1.size();
-    vector<int> s(n),a(n),b(n);
-    for(int i=0;i<n;i++)
-    {
-        s[i]=s1[i]-'a';
-        a[i]=a1[i]-'a';
-        b[i]=b1[i]-'a';
-    }
-    for(int i=0;i<n;i++)
-    {
-        if(a[i]==b[i])
-        {
-            if((temp[s[i]]!=-1&&temp[s[i]]!=a[i])||(taken[a[i]]&&temp[s[i]]!=a[i]))
-            {
-                printf("NO\n");
-                return;
-            }
-            temp[s[i]]=a[i];
-            taken[a[i]]=true;
-        }
-        else
-        {
-            for(int d=a[i]+1;d<b[i];d++)
-            {
-                if((temp[s[i]]==-1&&taken[d]==false)||temp[s[i]]==d)
-                {
-                    temp[s[i]]=d;
-                    taken[d]=true;
-                    printf("YES\n");
-                    for(int w=0;w<k;w++)
-                    {
-                        if(temp[w]!=-1)
-                            printf("%c",temp[w]+'a');
-                        else
-                        {
-                            for(int j=0;j<k;j++)
-                            {
-                                if(!taken[j])
-                                {
-                                    taken[j]=true;
-                                    printf("%c",j+'a');
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    printf("\n");
-                    return;
-                }
-            }
-            int t1[k];
-                    bool t2[k];
-                    for(int das=0;das<k;das++)
-                    {
-                        t1[das]=temp[das];
-                        t2[das]=taken[das];
-                    }
-            bool ne=false;
-            if((temp[s[i]]==-1&&taken[a[i]]==false)||temp[s[i]]==a[i])
-            {
-                temp[s[i]]=a[i];
-                taken[a[i]]=true;
-            for(int j=i+1;j<n;j++)
-            {
-                if(temp[s[j]]==-1)
-                {
-
-                    //printf("%i %i %i\n",a[i],b[i],s[i]);
-                    for(int d=a[j]+1;d<k;d++)
-                    {
-                        if(!taken[d])
-                        {
-                            temp[s[j]]=d;
-                            taken[d]=true;
-                            printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-                        }
-                    }
-                    if(taken[a[j]])
-                    {
-                        ne=true;
-                        break;
-                        //printf("NO\n");
-                        //return;
-                    }
-                    else
-                    {
-                        temp[s[j]]=a[j];
-                        taken[a[j]]=true;
-                    }
-                }
-                else
-                {
-                    if(temp[s[j]]>a[j])
-                    {
-                        printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-                    }
-                    if(temp[s[j]]<a[j])
-                    {
-                        ne=true;
-                        break;
-                    }
-                }
-            }
-            }
-            else
-            {
-                ne=true;
-            }
-            if(ne==false)
-            {
-                printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-            }
-            for(int das=0;das<k;das++)
-            {
-                temp[das]=t1[das];
-                taken[das]=t2[das];
-            }
-            if((temp[s[i]]==-1&&taken[b[i]]==false)||temp[s[i]]==b[i])
-            {
-                temp[s[i]]=b[i];
-                taken[b[i]]=true;
-            }
-            else
-            {
-                printf("NO\n");
-                return;
-            }
-            for(int j=i+1;j<n;j++)
-            {
-                if(temp[s[j]]==-1)
-                {
-                    for(int d=0;d<b[j];d++)
-                    {
-                        if(!taken[d])
-                        {
-                            temp[s[j]]=d;
-                            taken[d]=true;
-                            printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-                        }
-                    }
-                    if(taken[b[j]])
-                    {
-                        printf("NO\n");
-                        return;
-                    }
-                    else
-                    {
-                        temp[s[j]]=b[j];
-                        taken[b[j]]=true;
-                    }
-                }
-                else
-                {
-                    if(temp[s[j]]<b[j])
-                    {
-                        printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-                    }
-                    if(temp[s[j]]>b[j])
-                    {
-                        printf("NO\n");
-                        return;
-                    }
-                }
-            }
-            printf("YES\n");
-                            for(int w=0;w<k;w++)
-                            {
-                                if(temp[w]!=-1)
-                                    printf("%c",temp[w]+'a');
-                                else
-                                {
-                                    for(int j1=0;j1<k;j1++)
-                                    {
-                                        if(!taken[j1])
-                                        {
-                                            taken[j1]=true;
-                                            printf("%c",j1+'a');
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            printf("\n");
-                            return;
-        }
-    }
-    printf("YES\n");
-    for(int w=0; w<k; w++)
-    {
-        //printf("Testiram %i\n",w);
-        if(temp[w]!=-1)
-            printf("%c",temp[w]+'a');
-        else
-        {
-            for(int j=0; j<k; j++)
-            {
-                if(!taken[j])
-                {
-                    taken[j]=true;
-                    printf("%c",j+'a');
-                    break;
-                }
-            }
-        }
-    }
-    printf("\n");
-    return;
+    a+=b;
+    if(a>=mod)
+        a-=mod;
+    return a;
 }
+int multi(int a,int b)
+{
+    ll t=(ll)a*b;
+    if(t>mod)
+        t%=mod;
+    return t;
+}
+const int N=2e5+5;
+vector<int> duzina(N);
+vector<int> start(N);
+void update(int i,int d,int s)
+{
+    for(;i<N;i+=i&(-i))
+    {
+        if(duzina[i]==d)
+        {
+            start[i]=add(start[i],s);
+        }
+        if(duzina[i]<d)
+        {
+            duzina[i]=d;
+            start[i]=s;
+        }
+    }
+}
+pair<int,int> get(int i)
+{
+    int d=0;
+    int s=0;
+    for(;i;i-=i&(-i))
+    {
+        if(duzina[i]==d)
+        {
+            s=add(s,start[i]);
+        }
+        if(duzina[i]>d)
+        {
+            d=duzina[i];
+            s=start[i];
+        }
+    }
+    return make_pair(d,s);
+}
+vector<int> powers(N);
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-	int t;
-	cin >> t;
-	//scanf("%i",&t);
-	while(t--)
-        test();
-    return 0;
+    powers[0]=1;
+    for(int i=1;i<N;i++)
+        powers[i]=add(powers[i-1],powers[i-1]);
+    int n;
+	scanf("%i",&n);
+	vector<int> niz,niz1(n);
+	for(int i=0;i<n;i++)
+        scanf("%i",&niz1[i]);
+    vector<int> ss=niz1;
+    sort(all(ss));
+    ss.erase(unique(all(ss)),ss.end());
+    map<int,int> mapa;
+    for(int i=0;i<ss.size();i++)
+        mapa[ss[i]]=i+1;
+    for(int i=0;i<n;i++)
+        niz.pb(mapa[niz1[i]]);
+    reverse(all(niz));
+    vector<pair<int,int> > f,b; //f-decreasing, b-increasing
+    for(auto p:niz)
+    {
+        int best;
+        int num;
+        tie(best,num)=get(p);
+        if(best==0)
+            num=1;
+        best++;
+        f.pb({best,num});
+        update(p+1,best,num);
+    }
+    for(int i=0;i<N;i++)
+        duzina[i]=0,start[i]=0;
+    vector<int> rev;
+    for(auto p:niz)
+    {
+        rev.pb(N-p);
+    }
+    niz=rev;
+    for(auto p:niz)
+    {
+        int best;
+        int num;
+        tie(best,num)=get(p);
+        if(best==0)
+            num=1;
+        best++;
+        b.pb({best,num});
+        update(p+1,best,num);
+    }
+    int best=0;
+    int sum=0;
+    for(int i=0;i<n;i++)
+    {
+        int p=f[i].f+b[i].f-1;
+        int num=multi(powers[n-p],multi(f[i].s,b[i].s));
+        if(best==p)
+            sum=add(sum,num);
+        if(best<p)
+        {
+            best=p;
+            sum=num;
+        }
+    }
+    printf("%i %i\n",best,sum);
 }
