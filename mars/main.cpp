@@ -1,5 +1,5 @@
 /*
-    -Brute force with O(n^4).
+    -This brute force with O(n^4 log n) (1e9 operations) passes, but you of course asked for a n^2 log n, so i will try to figure that out.
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -31,7 +31,6 @@ template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
 	os << '}';
     return os;
 }
-int operations=0;
 const int K=9;
 const int N=512;
 int dist[N][N];
@@ -44,7 +43,6 @@ void solve(int p,int l,int r)
         d[p][i].resize(n,INT_MAX);
     if(r-l==1)
     {
-        //operations+=2;
         d[p][0][1]=dist[r][l];
         d[p][1][0]=dist[r][l];
         return;
@@ -61,7 +59,6 @@ void solve(int p,int l,int r)
             {
                 for(int b=m2+1;b<=r;b++)
                 {
-                    operations+=4;
                     int di=d[2*p][i-l][j-l]+d[2*p+1][a-m-1][b-m-1];
                     if(d[p][i-l][b-l]>di+dist[j][a])
                         d[p][i-l][b-l]=di+dist[j][a];
@@ -83,8 +80,7 @@ int main()
     int n=(int)pow(2,k);
     for(int i=0;i<n;i++)
         for(int j=0;j<n;j++)
-            dist[i][j]=0;
-            //scanf("%i",&dist[i][j]);
+            scanf("%i",&dist[i][j]);
     solve(1,0,n-1);
     int sol=INT_MAX;
     int mid=n/2;
@@ -96,6 +92,6 @@ int main()
                 sol=d[1][i][j];
         }
     }
-    printf("%i %i\n",sol,operations);
+    printf("%i\n",sol);
     return 0;
 }
