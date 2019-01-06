@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1546783046 source:c:\users\nikip\onedrive\at coder\dp heaven\frog 3\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+

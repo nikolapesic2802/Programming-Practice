@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1546775406 source:c:\users\nikip\onedrive\at coder\dp heaven\longest path\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
