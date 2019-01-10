@@ -1,6 +1,6 @@
 /*
     -Calculate for every position and a direction of push, where the robot will end up
-    -Use something like bfs to figure out what is the lowest number of pushes required to merge all the robots
+    -Use something like bfs to figure out what is the lowest number of pushes required to merge all the robots from interval [l,r]
 */
 #include <bits/stdc++.h>
 
