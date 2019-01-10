@@ -10,7 +10,7 @@
 
 using namespace std;
 
-const int N=9,H=500,maxDist=H*H; ///By trial and error(submitting a bunch), i found out that the max Distance will be at most 500*500 and not 500*500*9 which let my program run in time
+const int N=9,H=500,maxDist=H*H; ///By trial and error(submitting a bunch), i found out that the max distance will be at most 500*500 and not 500*500*9 which let my program run in time
 int n,h,w;
 vector<int> dx={-1,0,1,0},dy={0,1,0,-1};
 pair<int,int> dest[H][H][4],null={-1,-1};
