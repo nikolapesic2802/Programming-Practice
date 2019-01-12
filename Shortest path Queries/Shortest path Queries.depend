@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1547326892 source:c:\users\nikip\desktop\onedrive\cs academy\shortest path queries\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
