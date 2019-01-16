@@ -1,0 +1,129 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+struct gaus{
+    vector<int> g;
+    void init()
+    {
+        g.resize(20);
+    }
+    void add(int x)
+    {
+        for(int i=19;i>=0;i--)
+        {
+            if(x&(1<<i))
+            {
+                if(!g[i])
+                {
+                    g[i]=x;
+                    break;
+                }
+                x^=g[i];
+            }
+        }
+    }
+    int get()
+    {
+        int x=0;
+        for(int i=19;i>=0;i--)
+            x=max(x,x^g[i]);
+        return x;
+    }
+    void add(gaus ga)
+    {
+        vector<int> moguci;
+        for(int i=19;i>=0;i--)
+        {
+            if(ga.g[i])
+                moguci.pb(i);
+            if(!g[i])
+            {
+                for(auto p:moguci)
+                    if(p&(1<<i)){
+                        g[i]=p;
+                        break;
+                    }
+            }
+            else
+                for(auto &p:moguci)
+                    if(p&(1<<i))
+                        p=p^g[i];
+        }
+    }
+};
+int n;
+vector<int> c;
+struct segTree{
+    vector<gaus> g;
+    void init()
+    {
+        g.resize(4*n);
+    }
+    void build(int l=0,int r=n-1,int i=1)
+    {
+        g[i].init();
+        for(int k=l;k<=r;k++)
+            g[i].add(c[k]);
+        if(l==r)
+        {
+            return;
+        }
+        int m=(l+r)>>1;
+        build(l,m,2*i);
+        build(m+1,r,2*i+1);
+    }
+    gaus get(int qs,int qe,int l=0,int r=n-1,int i=1)
+    {
+        if(qs>r||qe<l){
+            gaus st;
+            st.init();
+            return st;
+        }
+        if(qs<=l&&qe>=r)
+            return g[i];
+        int m=(l+r)>>1;
+        gaus a=get(qs,qe,l,m,2*i),b=get(qs,qe,m+1,r,2*i+1);
+        a.add(b);
+        return a;
+    }
+}st;
+int main()
+{
+    scanf("%i",&n);
+    c.resize(n);
+    for(int i=0;i<n;i++)
+        scanf("%i",&c[i]);
+    st.init();
+    st.build();
+    int q;
+    scanf("%i",&q);
+    while(q--)
+    {
+        int l,r;
+        scanf("%i %i",&l,&r);
+        l--;r--;
+        printf("%i\n",st.get(l,r).get());
+    }
+    return 0;
+}
