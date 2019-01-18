@@ -18,7 +18,7 @@ int main()
 {
 	int n,k,l;
 	scanf("%i %i %i",&n,&k,&l);
-	vector<pair<int,pair<int,int> > > kam;
+	vector<pair<int,pair<int,int> > > chameleons;
 	for(int i=0;i<n;i++)
 	{
 		int d,kk;
@@ -26,47 +26,47 @@ int main()
 		string s;
 		cin >> s;
 		if(s[0]=='L')
-		kam.push_back({d,{kk,0}});
+            chameleons.push_back({d,{kk,0}});
 		else
-		kam.push_back({d,{kk,1}});
+            chameleons.push_back({d,{kk,1}});
 	}
-	sort(kam.begin(),kam.end());
+	sort(chameleons.begin(),chameleons.end());
 	long double colors[k],phase[k];
 	for(int i=0;i<k;i++)
         colors[i]=0,phase[i]=0;
 	int delta=0,last=-1,poslast,firstpos;
-	for(auto p:kam)
+	for(auto p:chameleons)
 	{
-		int d=p.f,boja=p.s.f,t=p.s.s;
+		int d=p.f,color=p.s.f,t=p.s.s;
 		if(t==1)
 		{
-			colors[boja]+=l-d;
+			colors[color]+=l-d;
 			if(last==-1)
                 firstpos=d;
 			else
 			{
-				long double dd=(long double)(d-poslast)/2;
-				phase[(0-delta+k)%k]+=dd;
+				long double distance_between_this_and_the_last_colision=(long double)(d-poslast)/2;
+				phase[(0-delta+k)%k]+=distance_between_this_and_the_last_colision;
 			}
-			delta+=boja;
+			delta+=color;
 			delta%=k;
-			last=boja;
+			last=color;
 			poslast=d;
 		}
 		else
 		{
 			if(last==-1)
 			{
-				colors[boja]+=d;
+				colors[color]+=d;
 				continue;
 			}
-			long double dd=(long double)(d-poslast)/2;
-			colors[boja]+=dd;
-			dd=(long double)(d-firstpos)/2+firstpos;
-			colors[(delta+boja)%k]+=dd;
+			long double dist_to_first_colision=(long double)(d-poslast)/2;
+			colors[color]+=dist_to_first_colision;
+			long double dist_from_last_colision_to_the_end=(long double)(d-firstpos)/2+firstpos;
+			colors[(delta+color)%k]+=dist_from_last_colision_to_the_end;
 			for(int i=0;i<k;i++)
 			{
-				int tr=(i+delta+boja)%k;
+				int tr=(i+delta+color)%k;
 				colors[tr]+=phase[i];
 			}
 		}
