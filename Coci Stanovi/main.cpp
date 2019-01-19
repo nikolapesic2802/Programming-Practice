@@ -4,6 +4,7 @@
     -The easiest way to keep track of this is to make 4 more dimensions of size 2 to keep track if that side of the current rectangle is shared with the starting one.
     -This approach gets TLE and we need to optimize it. We can do this by noticing that if we look at the left and right edge(or top and bottom) and only one of them shares a side with the starting rectangle,
     it doesn't matter which one, This allows us to use only 2 extra dimensions of size 3 instead of 4 dimensions of size 2. This nearly doubles the speed and allows the program to pass.
+    -We can also only look at states where n<m to further cut the speed of the program.
 */
 #include <bits/stdc++.h>
 
@@ -17,6 +18,8 @@ ll calc(int n,int m,int a1,int a2)
 {
 	if(dp[n][m][a1][a2]!=-1)
         return dp[n][m][a1][a2];
+    if(n>m)
+        return dp[n][m][a1][a2]=calc(m,n,a2,a1);
     dp[n][m][a1][a2]=(ll)(k-n*m)*(k-n*m);
     if(n*m<=k)
 		return dp[n][m][a1][a2];
