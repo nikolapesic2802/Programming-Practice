@@ -1,7 +1,7 @@
 /*
 	- dp1[l][r][a] = path with maximum length for range [l, r], going in direction a, ends at r
 	- dp2[l][r][a] = same as dp1 except it doesn't end at r
-	- dp3[l][r][a] = max of dp1[l][l..r][a]
+	- dp3[l][r][a] = max of dp2[l][l..r][a]
 	- We can find the answer with these DP's
 	- Precompute (i+1)%n and (i-1)%n to not get TLE
 */
@@ -24,7 +24,7 @@ using namespace std;
 const int mxN=500;
 int n, ai, dp1[mxN][mxN][2], dp2[mxN][mxN][2], dp3[mxN][mxN][2], b[mxN][2];
 bool k, adj[mxN][mxN];
-array<int, 2> ans;
+pair<int,int> ans;
 
 void c(int l, int r, int a) {
 	if(adj[l][r]) {
@@ -62,7 +62,7 @@ int main() {
 	for(int i=0; i<n; ++i)
 		for(int j=0; j<n; ++j)
 			for(int k=0; k<2; ++k)
-				ans=max({{dp2[i][j][k], i}, ans});
+				ans=max(make_pair(dp3[i][j][k], i), ans);
 	if(k) {
 		for(int i=0; i<n; ++i) {
 			for(int j=0; j<n; ++j) {
@@ -74,10 +74,10 @@ int main() {
 					if(k!=i)
 						for(int l=b[k][a]; l!=i; l=b[l][a])
 							if(adj[j][l])
-								ans=max({{2+dp1[i][j][a]+max(dp3[l][b[k][a]][a^1], dp3[l][b[i][a^1]][a]), k}, ans});
+								ans=max(make_pair(2+dp1[i][j][a]+max(dp3[l][b[k][a]][a^1], dp3[l][b[i][a^1]][a]), k), ans);
 				}
 			}
 		}
 	}
-	cout << ans[0] << "\n" << ans[1]+1;
+	cout << ans.first << "\n" << ans.second+1;
 }
