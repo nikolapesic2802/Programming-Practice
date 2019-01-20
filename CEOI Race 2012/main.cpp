@@ -4,7 +4,7 @@
     -dp2[l][r][a] - Max length of a path starting at l, visiting r and then continuing from r in the opposite direction(still in interval [l,r] and it can swap the direction multiple times)
     -dp3[l][r][a] - Max of dp2[l][l...r][a] : We need this to calculate the case where we have an intersection in O(n^3) and not O(n^4)
     -The case where there is no crossing can be solved using only the first 2 dps, the second case requires us to go though all the states of dp1, and for every one of them(if there is a path from l to r)
-    we need to try to elongate it such that we only cross once at the starting segment.
+    we need to try to elongate it such that we only cross once at the starting segment(we first add a starting segment and then add an edge crossing it, followed by a path of maximal length from that edge to harbors not in the interval.
 */
 #include <bits/stdc++.h>
 
