@@ -62,7 +62,7 @@ int main() {
 	for(int i=0; i<n; ++i)
 		for(int j=0; j<n; ++j)
 			for(int k=0; k<2; ++k)
-				ans=max(make_pair(dp3[i][j][k], i), ans);
+				ans=max(make_pair(dp2[i][j][k], i), ans);
 	if(k) {
 		for(int i=0; i<n; ++i) {
 			for(int j=0; j<n; ++j) {
