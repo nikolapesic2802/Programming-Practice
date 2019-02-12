@@ -1,3 +1,7 @@
+/*
+    -https://github.com/nikolapesic2802/Programming-Practice/blob/master/Kamion/solutions.pdf
+    -https://github.com/nikolapesic2802/Programming-Practice/blob/master/Kamion/kamion.cpp
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
