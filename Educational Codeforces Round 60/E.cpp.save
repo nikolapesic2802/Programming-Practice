@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+
+string ask(string s)
+{
+    cout << "? " << s << endl;
+    fflush(stdout);
+    string ans;
+    cin >> ans;
+    return ans;
+}
+string q1,q2,q3;
+const int N=1e4;
+vector<int> sol(N);
+int size1,size2,size3;
+vector<string> q,qu;
+int n;
+void solve(int l,int r,int nivo,vector<int> pozicije)
+{
+    int n=(r-l+1);
+    int pos=l;
+    for(int k=0;k<26;k++)
+    {
+        vector<int> novo;
+        for(auto p:pozicije)
+        {
+            if(q[nivo][p]=='a'+k)
+            {
+                novo.pb(p);
+            }
+        }
+        if(novo.size()==0)
+            continue;
+        if(novo.size()==1)
+        {
+            sol[pos]=novo.front();
+        }
+        else
+        {
+            solve(pos,pos+novo.size()-1,nivo+1,novo);
+        }
+        pos+=novo.size();
+    }
+    assert(pos==r);
+}
+int main()
+{
+	string s;
+	cin >> s;
+	n=s.size();
+	size1=n/26+1;
+	for(int i=0;i<26;i++)
+    {
+        for(int j=0;j<size1;j++)
+            if(q1.size()<n)
+            {
+                q1+='a'+i;
+            }
+    }
+    q.pb(ask(q1));
+    if(size1>1)
+    {
+        size2=size1/26+1;
+        for(int i=0;i<26;i++)
+        {
+            for(int j=0;j<26;j++)
+                for(int k=0;k<size2;k++)
+                    if(q2.size()<size1*(i+1)&&q2.size()<n)
+                        q2+='a'+j;
+        }
+        q.pb(ask(q2));
+        if(size2>1)
+        {
+            size3=size2/26+1;
+            for(int i=0;i<26;i++)
+                for(int j=0;j<26;j++)
+                    for(int l=0;l<26;l++)
+                        for(int k=0;k<size3;k++)
+                            if(q3.size()<size1*i+size2*(j+1)&&q3.size()<n)
+                                q3+='a'+l;
+            q.pb(ask(q3));
+        }
+    }
+    vector<int> pozicije;
+    for(int i=0;i<n;i++)
+        pozicije.pb(i);
+    qu.pb(q1);
+    qu.pb(q2);
+    qu.pb(q3);
+    solve(0,n-1,0,pozicije);
+    //cout << sol;
+    string sss;
+    for(int i=0;i<n;i++)
+    {
+        sss+=s[sol[i]];
+    }
+    cout << "! " << sss << endl;
+    return 0;
+}
