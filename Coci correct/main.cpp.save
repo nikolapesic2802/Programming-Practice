@@ -1,5 +1,9 @@
 /*
-    -First si
+    -First simulate the game for A, and then simulate it for the 2 spots next to A in the backwards direction.
+    Solutions that simulate the whole game using data structures and fail on time:
+    -Treap: https://github.com/nikolapesic2802/Programming-Practice/blob/master/Coci%20kolo%20Treap/main.cpp (85/100 points)
+    -Splay tree: https://github.com/nikolapesic2802/Programming-Practice/blob/master/Coci%20Kolo/main.cpp (50/100 points)
+    -Using the built-in Rope: https://github.com/nikolapesic2802/Programming-Practice/blob/master/Coci%20Kolo%20Rope/main.cpp (85/100 points)
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
