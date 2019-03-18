@@ -1,3 +1,6 @@
+/*
+    -
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -26,7 +29,7 @@ template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a
 
 int main()
 {
-	priority_queue<ll,vector<ll>,less<ll> > lefts;
+	priority_queue<ll> lefts;
 	priority_queue<ll,vector<ll>,greater<ll> > rights;
 	int n,h;
 	scanf("%i %i",&n,&h);
@@ -35,7 +38,7 @@ int main()
 	lefts.push(x);
 	rights.push(x);
 	ll sol=0;
-	for(int i=1;i<x;i++)
+	for(int i=1;i<n;i++)
     {
         int x;
         scanf("%i",&x);
@@ -48,7 +51,7 @@ int main()
             lefts.push(x+shift);
             lefts.pop();
             rights.push(left_border-shift);
-            sol+=abs(left_border-x);
+            sol+=left_border-x;
             continue;
         }
         if(x>right_border)
@@ -57,7 +60,7 @@ int main()
             rights.push(x-shift);
             rights.pop();
             lefts.push(right_border+shift);
-            sol+=abs(right_border-x);
+            sol+=x-right_border;
             continue;
         }
         lefts.push(x+shift);

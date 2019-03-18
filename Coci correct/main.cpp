@@ -1,3 +1,6 @@
+/*
+    -First simulate the game for A, and then simulate it for the 2 spots next to A in the backwards direction.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>

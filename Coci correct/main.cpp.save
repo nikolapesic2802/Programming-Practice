@@ -1,3 +1,6 @@
+/*
+    -First si
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -58,7 +61,7 @@ int backward(int x)
             x++;
         }
     }
-    return int;
+    return x;
 }
 int main()
 {
@@ -67,7 +70,7 @@ int main()
     {
         if(!visited[i])
             primes.pb(i);
-        if(primes.size()==k)
+        if((int)primes.size()==k)
             break;
         for(auto p:primes)
         {
@@ -79,6 +82,6 @@ int main()
         }
     }
     a=forward(a-1);
-    printf("%i %i\n",backward((a-1+n)%n)+1,ba
+    printf("%i %i\n",backward((a+1)%n)+1,backward((a-1+n)%n)+1);
     return 0;
 }
