@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1552595559 source:c:\users\nikip\desktop\onedrive\programming practice\noi 18 safety\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+
