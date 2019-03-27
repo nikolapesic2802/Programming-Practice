@@ -1,3 +1,7 @@
+/*
+    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/COCI/official/2010/contest1_solutions/solutions.pdf
+    -This plus my implementation of a segment tree with coordinate compression (an implicit segment tree gets 90/100 points because of memory :( )
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -25,6 +29,7 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
+///Part to calculate the sum of the sequence (taken from the official solution)
 ll gcd(ll a,ll b)
 {
     if(b==0)
@@ -57,9 +62,10 @@ ll solve(ll a,ll b,ll n)
 }
 ll get(ll a,ll b,int l,int r)
 {
-    //printf("%lld %lld  %i %i\n",a,b,l,r);
     return solve(a,b,r+1)-solve(a,b,l);
 }
+
+///Segment tree
 vector<int> val;
 int N;
 int value(int i)
@@ -82,7 +88,6 @@ struct segTree{
     {
         if(qs>r||qe<l)
             return;
-        //printf("%i %i  %i %i\n",qs,qe,l,r);
         if(qs<=l&&qe>=r)
         {
             a[i]=a1;
@@ -185,9 +190,7 @@ int main()
             st.sett(l,r,a,b);
         }
         else
-        {
             printf("%lld\n",st.getsum(l,r));
-        }
     }
     return 0;
 }
