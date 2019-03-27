@@ -57,107 +57,136 @@ ll solve(ll a,ll b,ll n)
 }
 ll get(ll a,ll b,int l,int r)
 {
+    //printf("%lld %lld  %i %i\n",a,b,l,r);
     return solve(a,b,r+1)-solve(a,b,l);
 }
-struct node{
-    ll sum;
-    int a,b,start;
-    int le,ri;
-};
-vector<node> drvo;
-int newNode()
+vector<int> val;
+int N;
+int value(int i)
 {
-    node a;
-    a.sum=0;
-    a.a=a.le=-1;
-    drvo.pb(a);
-    return drvo.size()-1;
+    if(i<0)
+        return val[0]-1;
+    return val[i];
 }
-void extend(int i)
-{
-    if(drvo[i].le!=-1)
-        return;
-    int a=newNode();
-    drvo[i].le=a;
-    int b=newNode();
-    drvo[i].ri=b;
-}
-int n;
-void sett(int qs,int qe,int a,int b,int l=0,int r=n,int i=0)
-{
-    if(qs>r||qe<l)
-        return;
-    if(qs<=l&&qe>=r)
+struct segTree{
+    vector<ll> sum;
+    vector<int> a,b,start;
+    void init()
     {
-        drvo[i].a=a;
-        drvo[i].b=b;
-        drvo[i].start=l-qs;
-        drvo[i].sum=get(a,b,drvo[i].start,drvo[i].start+r-l);
-        return;
+        sum.resize(4*N);
+        a.resize(4*N,-1);
+        b.resize(4*N);
+        start.resize(4*N);
     }
-    extend(i);
-    int m=(l+r)>>1;
-    if(drvo[i].a!=-1)
+    void sett(int qs,int qe,int a1,int b1,int l=0,int r=N,int i=1)
     {
-        drvo[drvo[i].le].a=drvo[i].a;
-        drvo[drvo[i].ri].a=drvo[i].a;
-        drvo[drvo[i].le].b=drvo[i].b;
-        drvo[drvo[i].ri].b=drvo[i].b;
-        drvo[drvo[i].le].start=drvo[i].start;
-        drvo[drvo[i].ri].start=drvo[i].start+m-l+1;
-        drvo[drvo[i].le].sum=get(drvo[drvo[i].le].a,drvo[drvo[i].le].b,drvo[drvo[i].le].start,drvo[drvo[i].le].start+m-l);
-        drvo[drvo[i].ri].sum=get(drvo[drvo[i].ri].a,drvo[drvo[i].ri].b,drvo[drvo[i].ri].start,drvo[drvo[i].ri].start+r-m-1);
-        drvo[i].a=-1;
+        if(qs>r||qe<l)
+            return;
+        //printf("%i %i  %i %i\n",qs,qe,l,r);
+        if(qs<=l&&qe>=r)
+        {
+            a[i]=a1;
+            b[i]=b1;
+            start[i]=value(l-1)+1-val[qs];
+            sum[i]=get(a1,b1,start[i],start[i]+val[r]-value(l-1)-1);
+            return;
+        }
+        int m=(l+r)>>1;
+        if(a[i]!=-1)
+        {
+            a[2*i]=a[i];
+            a[2*i+1]=a[i];
+            b[2*i]=b[i];
+            b[2*i+1]=b[i];
+            start[2*i]=start[i];
+            start[2*i+1]=start[i]+val[m]-value(l-1);
+            sum[2*i]=get(a[i],b[i],start[i],start[i]+val[m]-value(l-1)-1);
+            sum[2*i+1]=get(a[i],b[i],start[2*i+1],start[2*i+1]+val[r]-value(m)-1);
+            a[i]=-1;
+        }
+        sett(qs,qe,a1,b1,l,m,2*i);
+        sett(qs,qe,a1,b1,m+1,r,2*i+1);
+        sum[i]=sum[2*i]+sum[2*i+1];
     }
-    sett(qs,qe,a,b,l,m,drvo[i].le);
-    sett(qs,qe,a,b,m+1,r,drvo[i].ri);
-    drvo[i].sum=drvo[drvo[i].le].sum+drvo[drvo[i].ri].sum;
-}
-ll getsum(int qs,int qe,int l=0,int r=n,int i=0)
-{
-    if(qs>r||qe<l)
-        return 0;
-    if(qs<=l&&qe>=r)
-        return drvo[i].sum;
-    extend(i);
-    int m=(l+r)>>1;
-    if(drvo[i].a!=-1)
+    ll getsum(int qs,int qe,int l=0,int r=N,int i=1)
     {
-        drvo[drvo[i].le].a=drvo[i].a;
-        drvo[drvo[i].ri].a=drvo[i].a;
-        drvo[drvo[i].le].b=drvo[i].b;
-        drvo[drvo[i].ri].b=drvo[i].b;
-        drvo[drvo[i].le].start=drvo[i].start;
-        drvo[drvo[i].ri].start=drvo[i].start+m-l+1;
-        drvo[drvo[i].le].sum=get(drvo[drvo[i].le].a,drvo[drvo[i].le].b,drvo[drvo[i].le].start,drvo[drvo[i].le].start+m-l);
-        drvo[drvo[i].ri].sum=get(drvo[drvo[i].ri].a,drvo[drvo[i].ri].b,drvo[drvo[i].ri].start,drvo[drvo[i].ri].start+r-m-1);
-        drvo[i].a=-1;
+        if(qs>r||qe<l)
+            return 0;
+        if(qs<=l&&qe>=r)
+            return sum[i];
+        int m=(l+r)>>1;
+        if(a[i]!=-1)
+        {
+            a[2*i]=a[i];
+            a[2*i+1]=a[i];
+            b[2*i]=b[i];
+            b[2*i+1]=b[i];
+            start[2*i]=start[i];
+            start[2*i+1]=start[i]+val[m]-value(l-1);
+            sum[2*i]=get(a[i],b[i],start[i],start[i]+val[m]-value(l-1)-1);
+            sum[2*i+1]=get(a[i],b[i],start[2*i+1],start[2*i+1]+val[r]-value(m)-1);
+            a[i]=-1;
+        }
+        return getsum(qs,qe,l,m,2*i)+getsum(qs,qe,m+1,r,2*i+1);
     }
-    return getsum(qs,qe,l,m,drvo[i].le)+getsum(qs,qe,m+1,r,drvo[i].ri);
-}
+}st;
 int main()
 {
-    FILE *f=fopen("in.txt","r");
-    newNode();
-    int q;
-    fscanf(f,"%i %i",&n,&q);
+    int n,q;
+    scanf("%i %i",&n,&q);
+    queue<int> input;
     for(int i=0;i<q;i++)
     {
         int t;
-        fscanf(f,"%i",&t);
+        scanf("%i",&t);
+        input.push(t);
         int l,r;
-        fscanf(f,"%i %i",&l,&r);
+        scanf("%i %i",&l,&r);
         l--;r--;
+        input.push(l);
+        input.push(r);
+        val.pb(l);
+        val.pb(l-1);
+        val.pb(r-1);
+        val.pb(r);
         if(t==1)
         {
             int a,b;
-            fscanf(f,"%i %i",&a,&b);
-            sett(l,r,a,b);
+            scanf("%i %i",&a,&b);
+            input.push(a);
+            input.push(b);
+        }
+    }
+    sort(all(val));
+    val.erase(unique(val.begin(),val.end()),val.end());
+    N=val.size();
+    st.init();
+    map<int,int> mapa;
+    for(int i=0;i<val.size();i++)
+        mapa[val[i]]=i;
+    for(int i=0;i<q;i++)
+    {
+        int t=input.front();
+        input.pop();
+        int l,r;
+        l=input.front();
+        input.pop();
+        r=input.front();
+        input.pop();
+        l=mapa[l];
+        r=mapa[r];
+        if(t==1)
+        {
+            int a,b;
+            a=input.front();
+            input.pop();
+            b=input.front();
+            input.pop();
+            st.sett(l,r,a,b);
         }
         else
         {
-            getsum(l,r);
-            //printf("%lld\n",getsum(l,r));
+            printf("%lld\n",st.getsum(l,r));
         }
     }
     return 0;
