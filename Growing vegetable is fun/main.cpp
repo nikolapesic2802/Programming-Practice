@@ -1,3 +1,14 @@
+/*
+    -We can use dp to solve the problem in O(3*number of red flowers*number of green flowers*number of yellow flowers)
+    -Start from the beginning and choose what color flower to put next. Notice that its always optimal to put the closest flower of that kind.
+    -This allows us to sort the flowers of each kind by position and we know that we will at any time only take the first i flowers of that kind
+    -So we can form a state as follows: dp[position to which we are putting the flower][color of last flower][how many red flowers we took][same for green][same for yellow]
+    -When we decide to take a flower, we need to increase the positions of all the flowers between it and the position we are putting it to by 1.
+    -If we do this increment in O(n) its enough to pass the tests with N<=60.
+    -Next notice that we can calculate the position that we are currently putting the flower to from the number of red,green and yellow flowers we took so far, so we can remove it.
+    -Also notice that we can do some precalculation to get the number of flowers with bigger index than the one we currently want to take from the number of red,green and yellow flowers we took so far.
+    -This brings our dp down to the before mentioned O(3*number of red flowers*number of green flowers*number of yellow flowers), which is enough to solve the full task.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
