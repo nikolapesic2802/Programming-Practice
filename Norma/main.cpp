@@ -95,38 +95,30 @@ struct segTree{
         sum[i]=sum[2*i]+sum[2*i+1];
         sumone[i]=sumone[2*i]+sumone[2*i+1];
     }
-    void mul(int qs,int qe,int x,int l=0,int r=N-1,int i=1)
+    void upd(bool ismul,int qs,int qe,int x,int l=0,int r=N-1,int i=1)
     {
         if(qs>r||qe<l)
             return;
         if(qs<=l&&qe>=r)
         {
-            lazymul[i]*=x;
-            sum[i]*=x;
-            sumone[i]*=x;
-            return;
+            if(ismul){
+                lazymul[i]*=x;
+                sum[i]*=x;
+                sumone[i]*=x;
+                return;
+            }
+            if(lazymul[i]%x==0)
+            {
+                lazymul[i]/=x;
+                sum[i]/=x;
+                sumone[i]/=x;
+                return;
+            }
         }
         prop(i);
         int m=(l+r)>>1;
-        mul(qs,qe,x,l,m,2*i);
-        mul(qs,qe,x,m+1,r,2*i+1);
-        update(i);
-    }
-    void div(int qs,int qe,int x,int l=0,int r=N-1,int i=1)
-    {
-        if(qs>r||qe<l)
-            return;
-        if(qs<=l&&qe>=r&&(lazymul[i]%x==0))
-        {
-            lazymul[i]/=x;
-            sum[i]/=x;
-            sumone[i]/=x;
-            return;
-        }
-        prop(i);
-        int m=(l+r)>>1;
-        div(qs,qe,x,l,m,2*i);
-        div(qs,qe,x,m+1,r,2*i+1);
+        upd(ismul,qs,qe,x,l,m,2*i);
+        upd(ismul,qs,qe,x,m+1,r,2*i+1);
         update(i);
     }
     pair<__int128,__int128> getsums(int qs,int qe,int l=0,int r=N-1,int i=1)
@@ -182,7 +174,7 @@ int main()
             if(dones[tr])
                 break;
             dones[tr]=1;
-            st.mul(tr,smaller[tr]-1,arr[tr]);
+            st.upd(1,tr,smaller[tr]-1,arr[tr]);
             tr=smaller[tr];
         }
         tr=i;
@@ -191,15 +183,13 @@ int main()
             if(doneb[tr])
                 break;
             doneb[tr]=1;
-            st.mul(tr,bigger[tr]-1,arr[tr]);
+            st.upd(1,tr,bigger[tr]-1,arr[tr]);
             tr=bigger[tr];
         }
         pair<__int128,__int128> a=st.getsums(i,n-1);
-        a.f-=a.s*i;
-        a.f%=mod;
-        sol=add(sol,a.f);
-        st.div(i,smaller[i]-1,arr[i]);
-        st.div(i,bigger[i]-1,arr[i]);
+        sol=(a.f-a.s*i+sol)%mod;
+        st.upd(0,i,smaller[i]-1,arr[i]);
+        st.upd(0,i,bigger[i]-1,arr[i]);
     }
     printf("%i\n",sol);
     return 0;
