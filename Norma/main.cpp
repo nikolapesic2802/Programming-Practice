@@ -30,32 +30,7 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-const int mod=1e9;
-int add(int a,int b)
-{
-    a+=b;
-    if(a>=mod)
-        a-=mod;
-    return a;
-}
-int sub(int a,int b)
-{
-    a-=b;
-    if(a<0)
-        a+=mod;
-    return a;
-}
-int multi(int a,int b)
-{
-    return (ll)a*b%mod;
-}
-const int N=524288;
-ll gcd(ll a,ll b)
-{
-    if(b==0)
-        return a;
-    return gcd(b,a%b);
-}
+const int N=524288,mod=1e9;
 struct segTree{
     vector<__int128> sum,sumone;
     vector<ll> lazymul;
