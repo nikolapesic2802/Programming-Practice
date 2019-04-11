@@ -1,3 +1,12 @@
+/*
+    -Sort the fields in the matrix by the number in that field in decreasing order.
+    -Go through the fields in that order and if there is a field with bigger or equal value as the current field next to the current field (in one of the four directions), we can merge them in our dsu.
+    -Notice that now we can to from one field to another with the minimal cost field of the last field we visited in the last step if they are in the same dsu set when we do the merging for that field.
+    -We can do the queries offline.
+    -For every dsu set, make a std::set that holds the indexes of all the querys which have one of the fields from the query in that set.
+    -When we merge 2 dsu sets, we need to check if they both contain some query index and if so, we can tell what is the best solution to that query (The value of the last matrix field we considered) and erase the indexes from the sets.
+    -If we make sure to merge the sets by always inserting all the elements from the smaller set to the bigger set, we can get a complexity of O(n log^2 n), (any element will get inserted at most log n times and every insert takes log n operations)
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -38,7 +47,7 @@ int find(int a)
         return a;
     return par[a]=find(par[a]);
 }
-int trans;
+int curans;
 void merge(int a,int b)
 {
     a=find(a);
@@ -52,7 +61,7 @@ void merge(int a,int b)
     {
         if(qu[b].count(p))
         {
-            ans[p]=trans;
+            ans[p]=curans;
             qu[b].erase(p);
             continue;
         }
@@ -105,7 +114,7 @@ int main()
     int tr=0;
     for(int i=0;i<m;i++)
     {
-        trans=vals[i];
+        curans=vals[i];
         while(tr<(int)mat.size()&&mat[tr].f==vals[i])
         {
             int x=mat[tr].s.f,y=mat[tr].s.s;
