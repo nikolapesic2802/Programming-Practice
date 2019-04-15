@@ -3,7 +3,7 @@
     -Notice that its always optimal to block 1 node for every depth from [1,k](on the first move a node on depth 1, on the second a node on depth 2 and so on)
     -For every node calculate which interval of nodes of depth k it will cover(relabel the nodes at depth k according to their position in the euler tour) and at which depth the node is.
     -We need to check if its possible to select k of these intervals(one at each depth) such that they cover all the nodes at depth k.
-    -This can be done with dp in O(2^k*n)
+    -This can be done with dp in O(2^k*
 */
 #include <bits/stdc++.h>
 
