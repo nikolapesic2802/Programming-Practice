@@ -1,0 +1,158 @@
+/*
+    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/COCI/official/2009/olympiad_solutions/solutions.pdf
+*/
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T,greater<T> >& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+
+struct raz{
+    int a,b;
+    int nextNumber(bool mozeIsti)
+    {
+        int t=a/b+1;
+        if(a%b==0&&mozeIsti)
+            t--;
+        return t;
+    }
+    raz operator*(int d)
+    {
+        return {a*d,b};
+    }
+};
+bool operator<(raz i,raz j)
+{
+    return (ll)i.a*j.b<(ll)j.a*i.b;
+}
+bool operator>(raz i,raz j)
+{
+    return (ll)i.a*j.b>(ll)j.a*i.b;
+}
+ostream& operator<<(ostream& out,raz a)
+{
+    out << "[" << a.a << "/" << a.b << "]";
+    return out;
+}
+const int N=101,oo=INT_MAX/N;
+int dp[N][2*N];
+int skip;
+raz granica,mora;
+vector<int> niz;
+int calc(int in,int s)
+{
+    if(s<=0)
+        return 0;
+    if(in<0)
+        return oo;
+    if(in==skip)
+        return calc(in-1,s);
+    if(dp[in][s]!=-1)
+        return dp[in][s];
+    dp[in][s]=calc(in-1,s);
+    int koliko=0;
+    for(int i=1;i<=s+1;i++)
+    {
+        int treba=(granica*i).nextNumber(in<skip);
+        raz tr={treba,1};
+        if(tr<mora)
+        {
+            koliko=i;
+            continue;
+        }
+        if(koliko)
+        {
+            int aa=mora.nextNumber(1);
+            dp[in][s]=min(dp[in][s],max(0,aa-niz[in])+calc(in-1,s-koliko));
+            koliko=0;
+        }
+        dp[in][s]=min(dp[in][s],max(0,treba-niz[in])+calc(in-1,s-i));
+    }
+    return dp[in][s];
+}
+int main()
+{
+	int v,n,m;
+	scanf("%i %i %i",&v,&n,&m);
+	int total=0;
+	niz.resize(n);
+	for(int i=0;i<n;i++)
+        scanf("%i",&niz[i]),total+=niz[i];
+    total=v-total;
+    mora={5*v,100};
+    vector<int> sol(n);
+    for(int i=0;i<n;i++)
+    {
+        niz[i]+=total;
+        set<pair<raz,int>,greater<pair<raz,int> > > nxt;
+        for(int j=0;j<n;j++)
+        {
+            raz tr={niz[j],1};
+            if(tr<mora)
+                continue;
+            nxt.insert({tr,n-j});
+        }
+        int cnt=0;
+        for(int j=0;j<m;j++)
+        {
+            auto tr=*nxt.begin();
+            nxt.erase(nxt.begin());
+            if(tr.s==n-i)
+                cnt++;
+            tr.f.b++;
+            nxt.insert(tr);
+        }
+        niz[i]-=total;
+        sol[i]=cnt;
+        printf("%i ",cnt);
+    }
+    printf("\n");
+    for(int i=0;i<n;i++)
+    {
+        skip=i;
+        raz aa={niz[i],1};
+        granica=aa;
+        if(aa<mora)
+        {
+            printf("0 ");
+            continue;
+        }
+        int l=0,r=sol[i];
+        while(l<r)
+        {
+            int mi=(l+r)>>1;
+            granica.b=mi+1;
+            for(int k=0;k<N;k++)
+                for(int l=0;l<2*N;l++)
+                    dp[k][l]=-1;
+            int tr=calc(n-1,m-mi);
+            if(tr<=total)
+                r=mi;
+            else
+                l=mi+1;
+        }
+        printf("%i ",l);
+    }
+    return 0;
+}
