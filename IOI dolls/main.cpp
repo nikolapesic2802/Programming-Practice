@@ -1,3 +1,9 @@
+/*
+    -We will build one big switch to which all the nodes will connect.
+    -The first time we enter the switch, we should leave at node a[0], the second time at node a[1], and so on for the whole array, plus we should finish the tour by exiting to node 0 the last time.
+    -The 2*n switches solution is pretty easy to come up with, which is just to make a binary tree of switches and assign the corresponding output to the corresponding switch.
+    -The optimization to n+log n requires us to group all the empty nodes(nodes which lead back to the switch itself) to as little outputs as possible.
+*/
 #include <bits/stdc++.h>
 
 #define ll long long
