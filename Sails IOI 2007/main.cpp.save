@@ -1,8 +1,7 @@
 /*
     -Sort the masts by height from lowest to highest, now do the following greedy algorithm:
         Keep track of how many sails we have placed for every height, and for every mast place the k sails on the heights where we have placed the lowest amount of sails placed before.
-    -When doing this, we can keep the array of number of sails per height sorted decreasingly (when looking at height 0,1,2...)
-    -I used a segment tree to update the number of sails per height and just get the final result at the end.
+    -When doing this, we can keep the array of number of sails per height sorted decreasingly(when 
 */
 #include <bits/stdc++.h>
 
