@@ -1,3 +1,7 @@
+/*
+    -Consider each point as the point where the right angle is, translate the plane such that that point is in the center, and calculate the angle of each point using atan2.
+    -Now for every point calculate the number of points which have an angle of 90 degrees (PI/2 radians) more than itself. I did this using an ordered set, but there are many other solutions.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
