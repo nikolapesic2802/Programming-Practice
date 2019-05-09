@@ -10,6 +10,7 @@
 */
 #include <bits/stdc++.h>
 
+#define ll long long
 #define pb push_back
 #define f first
 #define s second
