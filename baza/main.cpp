@@ -1,36 +1,30 @@
+/*
+    -Basic idea:
+        -Build a trie on the words.
+        -For every query, find the index of the first word that is the same as the query (if there is one)
+        -Do the queries offline (sort them by the index of the first word that is the same) and for every query only count the words that have index up to and including the index of the same word.
+    -Memory optimizations:
+        -Use char[] and cnar* instead of string.
+        -Build a trie based only on words that appear in the given words and in the queries.
+        -Build a trie that is slower but more memory effective (only storing the next characters that we have, and not even in a map but in a vector)
+*/
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
-#define ll long long
 #define pb push_back
-#define sz(x) (int)(x).size()
-#define mp make_pair
 #define f first
 #define s second
 #define all(x) x.begin(), x.end()
-#define D(x) cerr << #x << " is " << (x) << "\n";
-
 using namespace std;
-using namespace __gnu_pbds;
-
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
-template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
-template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
-template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
-template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
-template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
 int n;
-vector<pair<short,vector<pair<char,int> > > > Trie;
+vector<pair<short,vector<pair<char,int> > > > trie;
 vector<pair<char,int> > empt;
 int cnt=0;
 int newNode()
 {
-    Trie.pb({-1,empt});
+    trie.pb({-1,empt});
     cnt++;
-    return Trie.size()-1;
+    return trie.size()-1;
 }
 int root;
 void construct(char *s,char pos,int tr=root)
@@ -38,12 +32,12 @@ void construct(char *s,char pos,int tr=root)
     if(s[pos]==0)
         return;
     int koji=-1;
-    for(auto p:Trie[tr].s)
+    for(auto p:trie[tr].s)
         if(p.f==s[pos])
             koji=p.s;
     if(koji==-1){
         int a=newNode();
-        Trie[tr].s.pb({s[pos],a});
+        trie[tr].s.pb({s[pos],a});
         koji=a;
     }
     construct(s,pos+1,koji);
@@ -52,12 +46,12 @@ void add(char* s,char pos,int ind,int tr=root)
 {
     if(s[pos]==0)
     {
-        if(Trie[tr].f==-1)
-            Trie[tr].f=ind;
+        if(trie[tr].f==-1)
+            trie[tr].f=ind;
         return;
     }
     int koji=-1;
-    for(auto p:Trie[tr].s)
+    for(auto p:trie[tr].s)
         if(p.f==s[pos])
             koji=p.s;
     if(koji==-1){
@@ -67,11 +61,11 @@ void add(char* s,char pos,int ind,int tr=root)
 }
 void inc(char* s,char pos,int tr=root)
 {
-    Trie[tr].f++;
+    trie[tr].f++;
     if(s[pos]==0)
         return;
     int koji=-1;
-    for(auto p:Trie[tr].s)
+    for(auto p:trie[tr].s)
         if(p.f==s[pos])
             koji=p.s;
     if(koji==-1)
@@ -82,12 +76,12 @@ int getkraj(char* s,char pos,int tr=root)
 {
     if(s[pos]==0)
     {
-        if(Trie[tr].f!=-1)
-            return Trie[tr].f;
+        if(trie[tr].f!=-1)
+            return trie[tr].f;
         return n;
     }
     int koji=-1;
-    for(auto p:Trie[tr].s)
+    for(auto p:trie[tr].s)
         if(p.f==s[pos])
             koji=p.s;
     if(koji==-1)
@@ -96,18 +90,18 @@ int getkraj(char* s,char pos,int tr=root)
 }
 int getcnt(char* s,char pos,int tr=root)
 {
-    int sol=Trie[tr].f;
+    int sol=trie[tr].f;
     if(s[pos]==0)
         return sol;
     int koji=-1;
-    for(auto p:Trie[tr].s)
+    for(auto p:trie[tr].s)
         if(p.f==s[pos])
             koji=p.s;
     if(koji==-1)
         return sol;
     return sol+getcnt(s,pos+1,koji);
 }
-const int mod=1e9+9;
+const int mod=1e9+7;
 int main()
 {
     root=newNode();
@@ -124,7 +118,7 @@ int main()
         {
             if(niz[i][j]==0)
                 break;
-            hh=(ll)hh*29%mod;
+            hh=(ll)hh*28%mod;
             hh+=niz[i][j]-'a'+1;
             if(hh>=mod)
                 hh-=mod;
@@ -146,7 +140,7 @@ int main()
         {
             if(qq[i][j]==0)
                 break;
-            hh=(ll)hh*29%mod;
+            hh=(ll)hh*28%mod;
             hh+=qq[i][j]-'a'+1;
             if(hh>=mod)
                 hh-=mod;
@@ -179,7 +173,7 @@ int main()
         qu[i].f.s=i;
         qu[i].f.f=getkraj(qq[i],0);;
     }
-    for(auto &p:Trie)
+    for(auto &p:trie)
         p.f=0;
     sort(all(qu));
     int tr=0;
