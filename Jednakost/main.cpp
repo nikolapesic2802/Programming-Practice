@@ -31,37 +31,46 @@ template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a
 
 string a;
 int s,n;
-vector<pair<int,int> > digits;
-vector<string> solution;
-bool solve(int pos,int ostalo)
+const int N=1001;
+int dp[N][5*N];
+pair<int,int> nxt[N][5*N];
+int solve(int pos,int ostalo)
 {
     if(pos==n)
-        return ostalo==0;
-    int tr=a[pos]-'0';
+    {
+        if(ostalo==0)
+            return 0;
+        return N;
+    }
+    if(dp[pos][ostalo]!=-1)
+        return dp[pos][ostalo];
+    dp[pos][ostalo]=N;
+    int tr=a[pos]-'0',poz=pos;
     string trsol;
     trsol+=a[pos];
     while(true)
     {
-        if(tr!=0||pos==n-1)
+        if(tr!=0||poz==n-1)
         {
-            if(solve(pos+1,ostalo-tr))
+            int trr=solve(poz+1,ostalo-tr)+1;
+            if(trr<dp[pos][ostalo])
             {
-                solution.pb(trsol);
-                return true;
+                dp[pos][ostalo]=trr;
+                nxt[pos][ostalo]={poz+1,ostalo-tr};
             }
         }
-        pos++;
-        if(pos>=n)
-            return false;
-        trsol+=a[pos];
-        tr=tr*10+a[pos]-'0';
+        poz++;
+        if(poz>=n)
+            return dp[pos][ostalo];
+        trsol+=a[poz];
+        tr=tr*10+a[poz]-'0';
         if(tr>ostalo)
-            return false;
+            return dp[pos][ostalo];
     }
 }
 int main()
 {
-    //freopen("jednakost.in.10","r",stdin);
+    memset(dp,-1,sizeof(dp));
 	cin >> a;
 	int gde=0;
 	for(int i=0;i<(int)a.size();i++)
@@ -71,22 +80,17 @@ int main()
         s=s*10+a[i]-'0';
     a=a.substr(0,gde);
     n=a.size();
-    assert(solve(0,s));
-    reverse(all(solution));
-    int cnt=0;
-    string ss;
-    for(int i=0;i<(int)solution.size();i++)
+    solve(0,s);
+    pair<int,int> tr={0,s};
+    while(tr.f!=n)
     {
-        ss=ss+solution[i];
-        cout << solution[i];
-        cnt+=stoi(solution[i]);
-        if(i!=(int)solution.size()-1)
-            cout << "+";
+        for(int i=tr.f;i<nxt[tr.f][tr.s].f;i++)
+            printf("%c",a[i]);
+        tr=nxt[tr.f][tr.s];
+        if(tr.f!=n)
+            printf("+");
         else
-            cout << "=" << s << endl;
+            printf("=%i\n",s);
     }
-    assert(ss==a);
-    assert(cnt==s);
-    //printf("%i %i\n",cnt,s);
     return 0;
 }
