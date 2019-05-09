@@ -1,3 +1,7 @@
+/*
+    -We can find the connecting room with a binary search and some math.
+    -Build a graph and run dijkstra to get the answer.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -24,7 +28,6 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-//3:20
 int main()
 {
 	ll n;
