@@ -1,0 +1,121 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+int n,x;
+int N=2097152;
+vector<int> niz,maxx(N);
+void prop(int i)
+{
+    if(maxx[i])
+    {
+        maxx[2*i]=max(maxx[2*i],maxx[i]);
+        maxx[2*i+1]=max(maxx[2*i+1],maxx[i]);
+        maxx[i]=0;
+    }
+}
+void setMax(int qs,int qe,int s,int l=0,int r=n-1,int i=1)
+{
+    if(qs>r||qe<l)
+        return;
+    if(qs<=l&&qe>=r)
+    {
+        maxx[i]=max(maxx[i],s);
+        return;
+    }
+    prop(i);
+    int m=(l+r)>>1;
+    setMax(qs,qe,s,l,m,2*i);
+    setMax(qs,qe,s,m+1,r,2*i+1);
+}
+ll calculate(int l=0,int r=n-1,int i=1)
+{
+    if(l==r)
+        return niz[l]-maxx[i];
+    prop(i);
+    int m=(l+r)>>1;
+    return calculate(l,m,2*i)+calculate(m+1,r,2*i+1);
+}
+int main()
+{
+    //n=1e6,x=1;
+	scanf("%i %i",&n,&x);
+	niz.resize(n);
+	for(int i=0;i<n;i++)
+        scanf("%i",&niz[i]);
+    vector<int> visina(n);
+    deque<pair<int,int> > q;
+    for(int i=0;i<x;i++)
+    {
+        pair<int,int> tr={niz[i],i};
+        while(q.size()&&q.back().f>=tr.f)
+            q.pop_back();
+        q.pb(tr);
+    }
+    for(int i=0;i<=n-x;i++)
+    {
+        visina[i]=q.front().f;
+        if(q.front().s==i)
+            q.pop_front();
+        if(i<n-x)
+        {
+            pair<int,int> tr={niz[i+x],i+x};
+            while(q.size()&&q.back().f>=tr.f)
+                q.pop_back();
+            q.pb(tr);
+        }
+        while(q.front().s)
+    }
+    q.clear();
+    ll sol=0;
+    for(int i=0;i<n;i++)
+    {
+        if(i<=n-x)
+        {
+            pair<int,int> tr={visina[i],i+x};
+            while(q.size()&&q.back().f<=tr.f)
+                q.pop_back();
+            q.pb(tr);
+        }
+    }
+    /*for(int i=0;i<=n-x;i++)
+        setMax(i,i+x-1,visina[i]);
+    ll sol=calculate();*/
+    printf("%lld\n",sol);
+    //while(true);
+    int cnt=0;
+    int last=0,lastvis=0;
+    //cout << visina << endl;
+    for(int i=0;i<=n-x;i++)
+    {
+        if(visina[i]>lastvis||i-last>=x||visina[i]>visina[i+1])
+        {
+            lastvis=visina[i];
+            last=i;
+            cnt++;
+        }
+    }
+    printf("%i\n",cnt);
+    return 0;
+}
