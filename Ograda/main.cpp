@@ -1,3 +1,15 @@
+/*
+    -For each starting position of the roller(there are n-x+1 of them) find how far up we can go.
+    -Use this to calculate the first number by getting the biggest height we can paint up to for every plank and subtracting the height of the plant from that number.
+    -This can be done (and is pretty much required) in O(n) instead of O(n log n) using a deque(something similar to convex hull optimization)
+    -For the second part of the task, there is a greedy algorithm that solves it.
+    -Go from the first position we can paint for the last and keep 2 variables, the position on which we last painted the fence and the height at which we painted the fence.
+    -There are 3 conditions under which we have to paint the current position:
+        The height to which we can currently paint is higher than the height we last painted at,
+        The distance between the last position we painted and the current is greater than of equal to x,
+        The height up to which we can paint in the current position is higher than the height we can pant for the next position.
+
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
