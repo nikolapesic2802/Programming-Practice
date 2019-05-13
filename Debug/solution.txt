@@ -1,0 +1,5 @@
+n^3:
+https://github.com/nikolapesic2802/Programming-Practice/blob/master/Debug/n%5E3.cpp
+
+Overkill n^2 log n used to get the best time on the problem:
+https://github.com/nikolapesic2802/Programming-Practice/blob/master/Debug/n%5E2%20log%20n.cpp 
