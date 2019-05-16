@@ -1,3 +1,6 @@
+/*
+    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/COCI/official/2007/contest4_solutions/solutions.pdf
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -62,7 +65,6 @@ struct segTree
 }st;
 int main()
 {
-    //freopen("ispiti.in.2","r",stdin);
 	int n;
 	scanf("%i",&n);
 	vector<pair<int,int> > q(n);
