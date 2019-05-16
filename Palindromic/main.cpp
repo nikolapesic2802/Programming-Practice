@@ -28,26 +28,11 @@ template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << 
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
 int main() {
+    string pattern="001011";
     int n;
     scanf("%i",&n);
-    if(n<8)
-    {
-        printf("%i\n",n);
-        for(int i=0;i<n;i++)
-            printf("1");
-        return 0;
-    }
-    if(n==8)
-    {
-        printf("7\n");
-        printf("00101100");
-        return 0;
-    }
-    printf("8\n");
+    printf("%i\n",min(n,8)-(n==8));
     for(int i=0;i<n;i++)
-        if(i%6==0||i%6==3||i%6==4)
-            printf("1");
-        else
-            printf("0");
+        printf("%c",pattern[i%6]);
     return 0;
 }
