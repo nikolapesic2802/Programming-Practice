@@ -24,22 +24,91 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
+const int N=1000;
+struct fenwick{
+    vector<int> sum,neg;
+    fenwick(){sum.resize(N);neg.resize(N);}
+    void add(int pos,int x)
+    {
+        for(int i=pos;i<N;i+=i&(-i))
+            sum[i]+=x;
+    }
+    void addneg(int pos,int x)
+    {
+        for(int i=pos;i<N;i+=i&(-i))
+            neg[i]+=x;
+    }
+    void update(int l,int r,int x)
+    {
+        add(l,x);
+        add(r+1,-x);
+        addneg(r+1,x);
+    }
+    int get(int pos)
+    {
+        int ans=0;
+        for(int i=pos;i;i-=i&(-i))
+            ans+=sum[i];
+        return ans;
+    }
+    int getneg(int pos)
+    {
+        int ans=0;
+        for(int i=pos;i;i-=i&(-i))
+            ans+=neg[i];
+        return ans;
+    }
+    int get(int l,int r)
+    {
+        return get(r)+getneg(r)-getneg(l);
+    }
+};
+struct fenwick2D{
+    vector<fenwick> sum,neg;
+    fenwick2D(){sum.resize(N);neg.resize(N);}
+    void add(int pos,int x,int l,int r)
+    {
+        for(int i=pos;i<N;i+=i&(-i))
+            sum[i].update(l,r,x);
+    }
+    void addneg(int pos,int x,int l,int r)
+    {
+        for(int i=pos;i<N;i+=i&(-i))
+            neg[i].update(l,r,x);
+    }
+    void update(int l1,int r1,int l2,int r2,int x)
+    {
+        add(l1,x,l2,r2);
+        add(r1+1,-x,l2,r2);
+        addneg(r1+1,x,l2,r2);
+    }
+    int get(int pos,int l,int r)
+    {
+        int ans=0;
+        for(int i=pos;i;i-=i&(-i))
+            ans+=sum[i].get(l,r);
+        return ans;
+    }
+    int getneg(int pos,int l,int r)
+    {
+        int ans=0;
+        for(int i=pos;i;i-=i&(-i))
+            ans+=neg[i].get(l,r);
+        return ans;
+    }
+    int get(int l1,int r1,int l2,int r2)
+    {
+        return get(r1,l2,r2)+getneg(r1,l2,r2)-getneg(l1,l2,r2);
+    }
+};
+struct query{
+    int x1y1,y2,z1,z2,
+};
 int main()
 {
-    int n=1e5;
-    vector<int> niz(n);
-    for(int i=0;i<n;i++)
-        
-	for(int i=1;i<=999;i++)
-    {
-        
-        vector<int> niz;
-        for(int j=0;j<n;j++)
-            niz.pb(n-j);
-        sort(all(niz));
-        int cnt=0;
-        for(auto p:niz)
-            cnt++;
-    }
+    int n;
+    scanf("%i",&n);
+    fenwick2D a;
+    vector<
     return 0;
 }
