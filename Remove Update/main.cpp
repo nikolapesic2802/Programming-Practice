@@ -27,7 +27,6 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-//7:17
 int n,q;
 struct segTree{
     vector<ll> maxx,lazy;
@@ -67,7 +66,6 @@ struct segTree{
 }st;
 int main()
 {
-    printf("WUT!\n");
 	scanf("%i %i",&n,&q);
 	st.init();
     vector<pair<pair<int,int>,int> > qq(q);
