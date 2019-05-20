@@ -1,3 +1,17 @@
+Day 1 - Task B "Crno Bela Zvezda"
+Lets define a star as a tree with 4 nodes(one root node and 3 children nodes (leaves) attached to it).
+If the root node is colored black, all the children nodes need to be colored white, and if the root node is colored white, all the children nodes need to be colored black.
+You are given N points, each of which is colored white or black. If you were to connect point 1 with point 2, points 2 with points 3,..., points N with point 1, the connections would form a regular N-tagon.
+You need to count the number of ways to draw N/4 stars (connecting some pairs of points) such that no two lines intersect taken modulo 1e9+7.
+Example:
+N=8,A=[1,1,0,1,0,1,1,1] (Colors of the nodes, 0-white, 1-black)
+There are two ways to draw the stars:
+First star:[1,2,3,4], second star:[5,6,7,8] (Indexes of the points)
+First star:[8,1,2,3], second star:[4,5,6,7]
+Constraints:
+1<=N<=500, N is divisible by 4
+0<=Ai<=1 (The color of the i-th point)
+
 Day 1 - Task C "Kamera".
 You are given a R*C matrix, each field contains one bidirectional weighted edge connecting u and v with weight w, 1 <= u,v <= N.
 You are given Q queries each describing a submatrix from x1 y1 to x2 y2.
