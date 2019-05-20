@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1558294328 source:c:\users\nikip\onedrive\programming practice\skladiste ez\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+
