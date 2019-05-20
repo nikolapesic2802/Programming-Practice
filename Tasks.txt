@@ -55,3 +55,9 @@ Constraints:
 1<K<=26
 Li>=1 (Length of string i)
 Sum over all Li <=150
+
+
+Notes:
+-I used the word "output" but the tasks all required you to implement a function that solves the problem, so a better word would probably be "return" and in some cases change the value of the given arrays.
+-There are test competitions where you can submit (they are open until the 25th). Link: https://takprog.petlja.org/srednjaskola/post/140
+-I think you should be able to find you way around the site using google translate. You will need to create an account on petlja.org but that shouldn't be an issue.
