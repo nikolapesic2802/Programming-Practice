@@ -4,7 +4,7 @@ If the root node is colored black, all the children nodes need to be colored whi
 You are given N points, each of which is colored white or black. If you were to connect point 1 with point 2, points 2 with points 3,..., points N with point 1, the connections would form a regular N-tagon.
 You need to count the number of ways to draw N/4 stars (connecting some pairs of points) such that no two lines intersect taken modulo 1e9+7.
 Example:
-N=8,A=[1,1,0,1,0,1,1,1] (Colors of the nodes, 0-white, 1-black)
+N=8,A=[1,1,0,1,0,1,1,1] (Colors of the points, 0-white, 1-black)
 There are two ways to draw the stars:
 First star:[1,2,3,4], second star:[5,6,7,8] (Indexes of the points)
 First star:[8,1,2,3], second star:[4,5,6,7]
