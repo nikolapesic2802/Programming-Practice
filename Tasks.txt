@@ -1,5 +1,5 @@
 Day 1- Task C "Kamera".
-You are given a RxC matrix, each field contains one bidirectional weighted edge from u to v with weight w, 1 <= u,v <= N.
+You are given a RxC matrix, each field contains one bidirectional weighted edge connecting u and v with weight w, 1 <= u,v <= N.
 You are given Q queries each describing a submatrix from x1 y1 to x2 y2.
 For each query, if you were to build a graph containing the edges from the submatrix, you need to output the weight of the MST of that graph or output -1 if the graph is not connected.
 If we mark the value of (x2-x1+1)/(y2-y1+1) as a, the following will be true for every query: 2/3 <= a <= 3/2.
@@ -13,3 +13,8 @@ And the queries are (1,1,3,4),(1,2,3,3),(3,4,3,4)
 The first query covers the whole matrix, the solution is 3.
 The second query covers the middle two columns, the solution is 4.
 The third query covers only the bottom right element, the solution is -1.
+Constraints:
+2<=N<=40
+1<=R,C<=250
+1<=Q<200000
+0<=W<=65535(the weight of the edges)
