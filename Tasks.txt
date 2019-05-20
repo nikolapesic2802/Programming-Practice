@@ -1,4 +1,4 @@
-Day 1- Task C "Kamera".
+Day 1 - Task C "Kamera".
 You are given a RxC matrix, each field contains one bidirectional weighted edge connecting u and v with weight w, 1 <= u,v <= N.
 You are given Q queries each describing a submatrix from x1 y1 to x2 y2.
 For each query, if you were to build a graph containing the edges from the submatrix, you need to output the weight of the MST of that graph or output -1 if the graph is not connected.
@@ -18,3 +18,19 @@ Constraints:
 1<=R,C<=250
 1<=Q<200000
 0<=W<=65535(the weight of the edges)
+
+Day 2 - Task C "Film"
+N people all watched the same movie, and after the movie ended, they all told you one scene from the movie represented as string of lower case letters of the alphabet.
+They all also told you that the scene they described appeared exactly once during the movie.
+You are given the task to consturct the shortest possible movie containing the first K letters of the alphabet matching the given description, or output -1 if its impossible.
+Example 1:
+N=6,K=26.
+Given scenes: "ave","venge","ger","rs","r","av". The solution is "avengers".
+Example 2:
+N=2,K=2.
+Given scenes: "ababa","aba". The solution is -1.
+Constraints:
+1<=N<=14
+1<K<=26
+Li>=1 (Length of string i)
+Sum over all Li <=150
