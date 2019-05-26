@@ -1,5 +1,5 @@
 /*
-    -Use mo's algorithm to get the count for every element for every query in O(N*sqrt(N)) for every query.
+    -Use mo's algorithm to get the count for every element for every query in O(N*sqrt(N)) for all queries.
     -If we split the query into segments(segment tree), the majority element in the whole range has to be the majority element in some segment of it. So we have log n candidates for the majority element for every query.
 */
 #include <bits/stdc++.h>
