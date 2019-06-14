@@ -1,0 +1,169 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+
+const int N=401;
+vector<vector<pair<int,int> > > graf(2*N);
+vector<int> st(2*N),edges;
+void reset()
+{
+    for(int i=0;i<2*N;i++)
+        graf[i].clear();
+    fill(all(st),0);
+    edges.clear();
+}
+void euler(int tr)
+{
+    for(;st[tr]<(int)graf[tr].size();)
+    {
+        pair<int,int> p=graf[tr][st[tr]];
+        st[tr]++;
+        euler(p.f);
+        if(p.s!=-1)
+            edges.pb(p.s);
+    }
+}
+int main()
+{
+    /*int n,m;
+    scanf("%i %i",&n,&m);
+    vector<vector<vector<int> > > pos(m,vector<vector<int> >(n));
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+            int a;
+            scanf("%i",&a);
+            a--;
+            pos[a][i].pb(i*m+j+1);
+        }
+    }
+    for(int i=0;i<m;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            for(int k=1;k<(int)pos[i][j].size();k++)
+                graf[i].pb({m+j,pos[i][j][k]});
+            if(pos[i][j].empty())
+                graf[m+j].pb({i,-1});
+        }
+    }
+    vector<pair<int,int> > ans;
+    for(int i=0;i<n+m;i++)
+    {
+        euler(i);
+        if(edges.size())
+        {
+            ans.pb({edges.front(),n*m+1});
+            for(int i=1;i<(int)edges.size();i++)
+                ans.pb({edges[i],edges[i-1]});
+            ans.pb({n*m+1,edges.back()});
+        }
+        edges.clear();
+    }
+    printf("%i\n",ans.size());
+    for(auto p:ans)
+        printf("%i %i\n",p.f,p.s);*/
+    for(int k=1;k<40;k+=2)
+    {
+        reset();
+        string tr="depot";
+        if(k>9)
+            tr+='0'+k/10;
+        tr+='0'+k%10;
+        string in=tr+".in",out=tr+".out";
+        FILE *f=fopen(in.c_str(),"r");
+        FILE *o=fopen(out.c_str(),"r");
+        int sol;
+        fscanf(o,"%i",&sol);
+        //freopen("depot39.in","r",stdin);
+        //freopen("depot.out","w",stdout);
+        int n,m;
+        fscanf(f,"%i %i",&n,&m);
+        vector<vector<vector<int> > > pos(m,vector<vector<int> >(n));
+        vector<int> aa(n*m+1);
+        aa[n*m]=-1;
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                int a;
+                fscanf(f,"%i",&a);
+                a--;
+                aa[i*m+j]=a;
+                pos[a][i].pb(i*m+j+1);
+            }
+        }
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                for(int k=1;k<(int)pos[i][j].size();k++)
+                    graf[i].pb({m+j,pos[i][j][k]});
+                if(pos[i][j].empty())
+                    graf[m+j].pb({i,-1});
+            }
+        }
+        vector<pair<int,int> > ans;
+        for(int i=0;i<n;i++)
+        {
+            euler(i);
+            if(edges.size())
+            {
+                ans.pb({edges.front(),n*m+1});
+                for(int i=1;i<(int)edges.size();i++)
+                    ans.pb({edges[i],edges[i-1]});
+                ans.pb({n*m+1,edges.back()});
+            }
+            edges.clear();
+        }
+        printf("Test %i: ",k);
+        printf("%i ",ans.size());
+        if(ans.size()==sol)
+            printf("Correct!\n");
+        else
+            printf("Incorrect!\n");
+        for(auto p:ans)
+            swap(aa[p.f-1],aa[p.s-1]);
+        vector<int> done(m);
+        int cnt=0,anss=0;
+        cout << aa << endl;
+        for(int i=0;i<n*m;i++)
+        {
+            assert(aa[i]!=-1);
+            assert(done[aa[i]]==0);
+            
+            cnt++;
+            if(cnt==m)
+            {
+                for(int i=0;i<m;i++)
+                    done[i]=0;
+                anss++;
+            }
+        }
+        assert(anss==n);
+    }
+    return 0;
+}
