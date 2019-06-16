@@ -1,5 +1,10 @@
 /*
-    -
+    -We can do dp. Our state is [last letter][cost of the word].
+    -Notice that since the cost only changes by 5, we can keep only 5 different costs at a time as a memory optimization.
+    -The size of the dp state will be 26*5 but since we need to find all the strings with costs up to N, we will need one extra dimension making the state 27*5;
+    -This allows us to do matrix multiplication. We need to find a matrix that brings us from one state to another, that matrix will have 4 dimensions.
+    -We will go from a state where we store values of costs 0,1,2,3,4 to 1,2,3,4,5 in one multiplication.
+    -The total complexity is O( (27*5)^3 * log n) which is about 7e7 operations.
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
