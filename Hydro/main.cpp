@@ -1,3 +1,12 @@
+/*
+    -We can transform each cycle into a vertex and connect it to all vertexes of the cycle.
+    -This gives us a tree that we can do DP on.
+    -Because of the shape of the graph, we will always end up where we started.
+    -We need to calculate can we reach that spot without having any more available paths and its our opponents turn.
+    -For each cycle and each point in the cycle we will calculate if we enter that cycle from that point, can we force us to end up at the end of the cycle and it be out turn/out opponents turn (2 values)
+    -If we have a cycle thats connected to the current vertex where we have both choices available, the answer for that vertex is always yes(we can end up going in a circle and end up with it being our opponents turn).
+    -Otherwise, the answer is the xor of all the values for all the cycles we can reach.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -54,7 +63,7 @@ struct node{
             a=1;
         return a;
     }
-    int getWithoutFlip(int i)
+    int getFlipWithout(int i)
     {
         int ans=0;
         if(i)
@@ -77,7 +86,7 @@ struct node{
             ans1=suf[i+1][ans1];
         if(i)
             ans1=pref[i-1][ans1];
-        int ans2=2;
+        int ans2=0;
         if(i)
             ans2=revpref[i-1][ans2];
         if(i<(int)suf.size()-1)
@@ -177,8 +186,7 @@ void calc(int tr=0,int par=-1)
             {
                 if(tr<N)
                 {
-                    int f=graf[tr].getWithoutFlip(i);
-                    //printf("%i %i %i: %i\n",tr,par,i,f);
+                    int f=graf[tr].getFlipWithout(i);
                     for(int k=0;k<4;k++)
                         graf[p].dp[j][k]=(((k&2)==2&&!f)||((k&1)&&f))+((k&1)<<1);
                 }
