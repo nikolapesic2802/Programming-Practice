@@ -86,7 +86,7 @@ struct node{
             ans1=suf[i+1][ans1];
         if(i)
             ans1=pref[i-1][ans1];
-        int ans2=0;
+        int ans2=2;
         if(i)
             ans2=revpref[i-1][ans2];
         if(i<(int)suf.size()-1)
