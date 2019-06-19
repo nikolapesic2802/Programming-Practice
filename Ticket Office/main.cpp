@@ -1,3 +1,11 @@
+/*
+    -Do dp[i][j] where i is the number of people you assigned tickets so far and j is the position.
+    -We can notice that if there is someone that wants the seats starting at the current position, its always optimal to give them the seats.
+    -This reduces the states we visit to about 3e6 in the worst case allowing us to do this dp.
+    -If we did the dp recursively we would need to store all the solutions in a map which would cause memory limit.
+    -We need to do this dp iteratively and save memory that way.
+    -This is not the intended complexity and it probably wouldn't pass the tests in 2005.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -24,65 +32,91 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-const int M=3e4+5,NN=1e6;
+const int M=3e4+5;
 vector<int> ima(M,-1);
 int m,l,n;
-gp_hash_table<int,int> dp[M];
-int cnt=0;
-int calc(int pos,int uzeo)
+void solve()
 {
-    if(uzeo==n||pos>m-l)
-        return 0;
-    if(dp[pos].find(uzeo)!=dp[pos].end())
-        return dp[pos][uzeo];
-    cnt++;
-    if(cnt>NN)
+    vector<priority_queue<int,vector<int>,greater<int> > > states(M);
+    vector<vector<int> > order(M);
+    vector<vector<bool> > nxt(M);
+    states[0].push(0);
+    for(int i=0;i<M;i++)
     {
-        if(ima[pos]!=-1)
-            return 2+calc(pos+l,uzeo+1);
-        return max(calc(pos+1,uzeo),1+calc(pos+l,uzeo+1));
+        while(states[i].size())
+        {
+            int pos=states[i].top();
+            states[i].pop();
+            while(states[i].size()&&states[i].top()==pos)
+                states[i].pop();
+            order[i].pb(pos);
+            if(i==n||pos>m-l)
+                continue;
+            if(ima[pos]!=-1)
+            {
+                states[i+1].push(pos+l);
+                continue;
+            }
+            states[i].push(pos+1);
+            states[i+1].push(pos+l);
+        }
     }
-    if(ima[pos]!=-1)
-        return dp[pos][uzeo]=2+calc(pos+l,uzeo+1);
-    return dp[pos][uzeo]=max(calc(pos+1,uzeo),1+calc(pos+l,uzeo+1));
-}
-int main()
-{
-    scanf("%i %i %i",&m,&l,&n);
-    for(int i=0;i<n;i++)
+    vector<vector<int> > val(2,vector<int>(M));
+    for(int i=M-1;i>=0;i--)
     {
-        int a;
-        scanf("%i",&a);
-        a--;
-        ima[a]=i;
+        for(int j=order[i].size()-1;j>=0;j--)
+        {
+            int pos=order[i][j];
+            if(i==n||pos>m-l)
+            {
+                val[i&1][pos]=0;
+                nxt[i].pb(0);
+                continue;
+            }
+            if(ima[pos]!=-1)
+            {
+                val[i&1][pos]=2+val[(i+1)&1][pos+l];
+                nxt[i].pb(0);
+                continue;
+            }
+            int a=val[i&1][pos+1],b=1+val[(i+1)&1][pos+l];
+            val[i&1][pos]=max(a,b);
+            if(a<=b)
+                nxt[i].pb(1);
+            else
+                nxt[i].pb(0);
+        }
     }
-    printf("%i\n",calc(0,0));
-    printf("%i\n",cnt);
+    printf("%i ",val[0][0]);
     int x=0,y=0;
     vector<int> preostala;
     vector<bool> uzeo(n);
     vector<pair<int,int> > sol;
-    while(x<=m-l&&y<n)
+    int i=-1,j=-1,last=-1;
+    while(true)
     {
-        if(ima[x]!=-1)
+        if(x!=last)
+            i=0,j=nxt[x].size()-1,last=x;
+        if(x==n||y>m-l)
+            break;
+        while(order[x][i]!=y)
+            i++,j--;
+        if(ima[y]!=-1)
         {
-            sol.pb({x,ima[x]});
-            uzeo[ima[x]]=1;
-            x+=l;y++;
+            sol.pb({y,ima[y]});
+            uzeo[ima[y]]=1;
+            y+=l;
+            x++;
             continue;
         }
-
-        int a=dp[x+1][y],b=1+dp[x+l][y+1];
-        if(a>b)
+        if(nxt[x][j])
         {
+            preostala.pb(y);
+            y+=l;
             x++;
         }
         else
-        {
-            preostala.pb(x);
-            x+=l;
             y++;
-        }
     }
     for(int i=0;i<n;i++)
     {
@@ -95,8 +129,20 @@ int main()
         }
     }
     sort(all(sol));
-    /*printf("%i\n",sol.size());
+    printf("%i\n",sol.size());
     for(auto p:sol)
-        printf("%i %i\n",p.s+1,p.f+1);*/
+        printf("%i %i\n",p.s+1,p.f+1);
+}
+int main()
+{
+    scanf("%i %i %i",&m,&l,&n);
+    for(int i=0;i<n;i++)
+    {
+        int a;
+        scanf("%i",&a);
+        a--;
+        ima[a]=i;
+    }
+    solve();
     return 0;
 }
