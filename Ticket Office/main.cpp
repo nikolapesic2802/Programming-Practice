@@ -5,7 +5,7 @@
     -If we did the dp recursively we would need to store all the solutions in a map which would cause memory limit.
     -We need to do this dp iteratively and save memory that way.
     -This is not the intended complexity and it probably wouldn't pass the tests in 2005.
-    -This solution wouldn't pass for n=m=3e4,l=1 and all positions are 1.
+    -This solution wouldn't pass for N=M=3e4,L=1 and all positions are 1.
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
