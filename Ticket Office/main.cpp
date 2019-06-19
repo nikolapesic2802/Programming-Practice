@@ -1,7 +1,7 @@
 /*
     -Do dp[i][j] where i is the number of people you assigned tickets so far and j is the position.
     -We can notice that if there is someone that wants the seats starting at the current position, its always optimal to give them the seats.
-    -This reduces the states we visit to about 3e6 in the worst case allowing us to do this dp.
+    -This reduces the states we visit to about 3e6 (from all the official tests) in the worst case allowing us to do this dp.
     -If we did the dp recursively we would need to store all the solutions in a map which would cause memory limit.
     -We need to do this dp iteratively and save memory that way.
     -This is not the intended complexity and it probably wouldn't pass the tests in 2005.
