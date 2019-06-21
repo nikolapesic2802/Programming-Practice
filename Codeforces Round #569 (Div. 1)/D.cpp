@@ -24,54 +24,8 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-vector<vector<int> > field;
-void insert(int row,int tr)
-{
-    if((int)field.size()==row)
-    {
-        field.pb({tr});
-        return;
-    }
-    for(auto &p:field[row])
-        if(p>tr)
-        {
-            insert(row+1,p);
-            p=tr;
-            return;
-        }
-    field[row].pb(tr);
-}
 int main()
 {
-	int n;
-	scanf("%i",&n);
-	vector<vector<int> > order(n);
-	vector<int> values;
-	for(int i=0;i<n;i++)
-    {
-        int k;
-        scanf("%i",&k);
-        order[i].resize(k);
-        for(int j=0;j<k;j++)
-            scanf("%i",&order[i][j]),values.pb(order[i][j]);
-    }
-    sort(all(values));
-    /*gp_hash_table<int,int> mapa;
-    for(int i=0;i<(int)values.size();i++)
-        mapa[values[i]]=i;
-    for(auto &p:order)
-        for(auto &d:p)
-            d=mapa[d];*/
-    int m=values.size();
-    vector<int> perm=values;
-    /*for(int i=0;i<m;i++)
-        perm.pb(i);*/
-    do{
-        field.clear();
-        for(auto p:perm)
-            insert(0,p);
-        if(field==order)
-            cout << perm << endl;
-    }while(next_permutation(all(perm)));
+	
     return 0;
 }

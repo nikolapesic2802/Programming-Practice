@@ -24,54 +24,68 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-vector<vector<int> > field;
-void insert(int row,int tr)
+const int N=1e6+1;
+vector<int> maxx(4*N),lazy(4*N);
+void prop(int i)
 {
-    if((int)field.size()==row)
+    maxx[2*i]+=lazy[i];
+    maxx[2*i+1]+=lazy[i];
+    lazy[2*i]+=lazy[i];
+    lazy[2*i+1]+=lazy[i];
+    lazy[i]=0;
+}
+int findFirst(int l=0,int r=N-1,int i=1)
+{
+    if(maxx[i]<1)
+        return -1;
+    if(l==r)
+        return l;
+    prop(i);
+    int m=(l+r)>>1;
+    if(maxx[2*i+1]>=1)
+        return findFirst(m+1,r,2*i+1);
+    return findFirst(l,m,2*i);
+}
+void add(int qs,int qe,int val,int l=0,int r=N-1,int i=1)
+{
+    if(i==1)
+        printf("%i %i %i\n",qs,qe,val);
+    if(qs>r||qe<l)
+        return;
+    if(qs<=l&&qe>=r)
     {
-        field.pb({tr});
+        maxx[i]+=val;
+        lazy[i]+=val;
         return;
     }
-    for(auto &p:field[row])
-        if(p>tr)
-        {
-            insert(row+1,p);
-            p=tr;
-            return;
-        }
-    field[row].pb(tr);
+    int m=(l+r)>>1;
+    prop(i);
+    add(qs,qe,val,l,m,2*i);
+    add(qs,qe,val,m+1,r,2*i+1);
+    maxx[i]=max(maxx[2*i],maxx[2*i+1]);
 }
 int main()
 {
-	int n;
-	scanf("%i",&n);
-	vector<vector<int> > order(n);
-	vector<int> values;
+	int n,m;
+	scanf("%i %i",&n,&m);
+	vector<int> a(n),b(n);
 	for(int i=0;i<n;i++)
+        scanf("%i",&a[i]),add(0,a[i],1);
+    for(int i=0;i<n;i++)
+        scanf("%i",&b[i]),add(0,b[i],-1);
+    int q;
+    scanf("%i",&q);
+    while(q--)
     {
-        int k;
-        scanf("%i",&k);
-        order[i].resize(k);
-        for(int j=0;j<k;j++)
-            scanf("%i",&order[i][j]),values.pb(order[i][j]);
+        int t,i,x;
+        scanf("%i %i %i",&t,&i,&x);
+        printf("%i %i %i!\n",t,)
+        i--;
+        if(t==1)
+            add(0,a[i],-1),add(0,x,1),a[i]=x;
+        if(t==2)
+            add(0,b[i],1),add(0,x,-1),b[i]=x;
+        printf("%i\n",findFirst());
     }
-    sort(all(values));
-    /*gp_hash_table<int,int> mapa;
-    for(int i=0;i<(int)values.size();i++)
-        mapa[values[i]]=i;
-    for(auto &p:order)
-        for(auto &d:p)
-            d=mapa[d];*/
-    int m=values.size();
-    vector<int> perm=values;
-    /*for(int i=0;i<m;i++)
-        perm.pb(i);*/
-    do{
-        field.clear();
-        for(auto p:perm)
-            insert(0,p);
-        if(field==order)
-            cout << perm << endl;
-    }while(next_permutation(all(perm)));
     return 0;
 }
