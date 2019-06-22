@@ -1,3 +1,13 @@
+/*
+    -We can assing a number to every string and since the number of strings is at most 3*n*2=6000, there are at most 6000 different numbers in the input.
+    -Binary search for the answer.
+    -For every pair of numbers on the right side of the equation we need to choose the ordering.
+    -If we have the length of the solution we are checking then we have at most o(n) different candidates for the starting positions. At each starting position of the first set and the second set we will get the has of that interval and see if any two hashes match.
+    -For the ordering of the right side:
+    -If both of the numbers on the right side have been visited before, order them by the number.
+    -If one number has been visited, put it at the first position.
+    -If both of the numbers have been visited, put the one which appears first in the rest of the equations at the start.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
