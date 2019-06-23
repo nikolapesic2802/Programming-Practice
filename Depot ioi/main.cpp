@@ -25,53 +25,166 @@ template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << 
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
 vector<vector<int> > field;
-void insert(int row,int tr)
+vector<pair<int,pair<int,int> > > ins;
+vector<vector<pair<int,pair<int,int> > > > undo;
+vector<vector<int> > order;
+vector<int> roww(16),fieldrow(16);
+vector<bool> napred(16);
+int n,N;
+bool insert(int row,int tr)
 {
+    if(roww[tr]<row)
+        return false;
+    if(row==0)
+        undo.pb(ins);
     if((int)field.size()==row)
     {
+        if((int)order.size()<=row)
+            return false;
+        if(order[row][0]>tr)
+            return false;
+        if(roww[tr]==row&&order[row][0]!=tr)
+            return false;
         field.pb({tr});
+        undo.back().pb({-1,{-1,-1}});
+        undo.back().pb({-2,{tr,fieldrow[tr]}});
+        fieldrow[tr]=row;
+        return true;
+    }
+    int i=lower_bound(all(field[row]),tr)-field[row].begin();
+    if(i==(int)field[row].size())
+    {
+        if((int)order[row].size()<=(int)field[row].size())
+            return false;
+        if(order[row][i]>tr)
+            return false;
+        if(roww[tr]==row&&order[row][i]!=tr)
+            return false;
+        field[row].pb(tr);
+        undo.back().pb({-1,{row,row}});
+        undo.back().pb({-2,{tr,fieldrow[tr]}});
+        fieldrow[tr]=row;
+        return true;
+    }
+    bool test=insert(row+1,field[row][i]);
+    if(!test)
+        return test;
+    if(order[row][i]>tr)
+        return false;
+    if(roww[tr]==row&&order[row][i]!=tr)
+            return false;
+    undo.back().pb({row,{i,field[row][i]}});
+    field[row][i]=tr;
+    undo.back().pb({-2,{tr,fieldrow[tr]}});
+    fieldrow[tr]=row;
+    return true;
+}
+void undoo()
+{
+    for(auto p:undo.back())
+    {
+        if(p.f==-2)
+        {
+            fieldrow[p.s.f]=p.s.s;
+            continue;
+        }
+        if(p.f==-1)
+        {
+            if(p.s.f==-1)
+                field.pop_back();
+            else
+                field[p.s.f].pop_back();
+        }
+        else
+            field[p.f][p.s.f]=p.s.s;
+    }
+    undo.pop_back();
+}
+vector<int> values;
+bool taken[15];
+vector<int> orderr;
+int cnt=0;
+void genAnswers()
+{
+    if(cnt==N)
+    {
+        for(auto p:orderr)
+            printf("%i ",values[p]);
+        printf("\n");
         return;
     }
-    for(auto &p:field[row])
-        if(p>tr)
+    int manjih=0;
+    for(int i=0;i<N;i++)
+    {
+        if(!taken[i])
         {
-            insert(row+1,p);
-            p=tr;
-            return;
+            if(roww[i]>manjih)
+                return;
+            manjih++;
         }
-    field[row].pb(tr);
+        else
+        {
+            if(roww[i]-fieldrow[i]>manjih)
+                return;
+        }
+    }
+    for(int i=0;i<N;i++)
+    {
+        if(cnt==0&&!napred[i]){
+            if(!taken[i])
+                manjih++;
+            continue;
+        }
+        if(!taken[i])
+        {
+            bool tr=insert(0,i);
+            if(tr)
+            {
+                orderr.pb(i);
+                taken[i]=1;
+                cnt++;
+                genAnswers();
+                cnt--;
+                taken[i]=0;
+                orderr.pop_back();
+            }
+            undoo();
+            manjih++;
+        }
+    }
 }
 int main()
 {
-	int n;
 	scanf("%i",&n);
-	vector<vector<int> > order(n);
-	vector<int> values;
+	order.resize(n);
 	for(int i=0;i<n;i++)
     {
         int k;
         scanf("%i",&k);
+        N+=k;
         order[i].resize(k);
-        for(int j=0;j<k;j++)
-            scanf("%i",&order[i][j]),values.pb(order[i][j]);
+        for(int j=0;j<k;j++){
+            scanf("%i",&order[i][j]);
+            values.pb(order[i][j]);
+        }
     }
     sort(all(values));
-    /*gp_hash_table<int,int> mapa;
-    for(int i=0;i<(int)values.size();i++)
+    gp_hash_table<int,int> mapa;
+    for(int i=0;i<N;i++)
         mapa[values[i]]=i;
     for(auto &p:order)
         for(auto &d:p)
-            d=mapa[d];*/
-    int m=values.size();
-    vector<int> perm=values;
-    /*for(int i=0;i<m;i++)
-        perm.pb(i);*/
-    do{
-        field.clear();
-        for(auto p:perm)
-            insert(0,p);
-        if(field==order)
-            cout << perm << endl;
-    }while(next_permutation(all(perm)));
+            d=mapa[d];
+    for(int i=0;i<(int)order.size();i++)
+        for(auto p:order[i])
+            roww[p]=i;
+    for(int i=0;i<(int)order.size();i++)
+        for(int j=1;j<(int)order[i].size();j++)
+            if(order[i][j]<order[i][j-1])
+                return 0;
+    //napred[11]=1;
+    for(int i=0;i<(int)order.size();i++)
+        napred[order[i][0]]=1;
+    genAnswers();
     return 0;
 }
