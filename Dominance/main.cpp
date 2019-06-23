@@ -1,3 +1,11 @@
+/*
+    -Look at the grid at a 45 degree angle.
+    -The required areas can be broken down into 2 squares based on which diagonal the field is in.
+    -All the diagonals with even index will have the same number of squares in them, same for odd indexes.
+    -We can treat these as events, do coordinate compression and sweep through the events.
+    -Its possible to process the events in n*sqrt(n) with sqrt decomposition but not required by the task.
+    -I coded a much simpler n^2 solution.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
