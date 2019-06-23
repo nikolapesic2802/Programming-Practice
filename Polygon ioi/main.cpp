@@ -78,28 +78,50 @@ int gcd(int a,int b)
     return gcd(b,a%b);
 }
 vector<pt> poly;
+pt start={0,0};
+int m;
+vector<pt> solA,solB;
 bool moze(pt a,int ostaloA,int ind)
 {
-    cout << ostaloA << a << ind << endl;
-    cout << poly[ind]-a << endl;
-    if(ind==(int)poly.size()-1)
-        return ostaloA==0;
-    if(moze(a,ostaloA,ind+1))
-        return true;
-    pt nxt=poly[ind+1];
-    pt diff=nxt-poly[ind];
-    int g=gcd(diff.x,diff.y);
-    diff=diff/g;
-    for(int i=1;i<=g;i++)
-        if(moze(a+diff*i,ostaloA-1,ind+1))
+    if(ostaloA==0)
+    {
+        if(start==a)
+        {
+            if(ind==m)
+                return true;
+            if(moze(a,ostaloA,ind+1))
+            {
+                solB.pb(poly[ind]);
+                return true;
+            }
+        }
+        else
+            return false;
+    }
+    if(ind==m)
+        return false;
+    int g=gcd(abs(poly[ind].x),abs(poly[ind].y));
+    for(int i=g;i>=0;i--)
+    {
+        if(moze(a+poly[ind]/g*i,ostaloA-(i!=0),ind+1))
+        {
+            if(i)
+                solA.pb(poly[ind]/g*i);
+            if(i!=g)
+                solB.pb(poly[ind]/g*(g-i));
             return true;
+        }
+    }
     return false;
 }
 int main()
 {
+    /*printf("3\n0 0\n203 1\n101 543\n2\n0 0\n2017 2027\n0 0");
+    return 0;*/
     int mn=0,mx=0;
 	for(int k=1;k<=11;k++)
     {
+        poly.clear();
         string in;
         in+='0'+k/10;
         in+='0'+k%10;
@@ -110,10 +132,38 @@ int main()
         for(int i=0;i<n;i++)
             scanf("%i %i",&poly[i].x,&poly[i].y);
         poly=fix(poly);
-        cout << poly << endl;
-        pt start={0,0};
-        for(int i=3;i>=1;i--)
-            printf("%i: %i\n",i,moze(start,i,0));
+        vector<pt> novi;
+        for(int i=0;i<n;i++)
+            novi.pb(poly[(i+1)%n]-poly[i]);
+        poly=novi;
+        m=poly.size();
+        //printf("%i: %i resenje: ",k,poly.size());
+        for(int i=2;i>=2;i--){
+            if(moze(start,i,0))
+            {
+                //printf("%i\n",i);
+                break;
+            }
+        }
+        reverse(all(solA));
+        reverse(all(solB));
+        string out;
+        out+='0'+(k)/10;
+        out+='0'+(k)%10;
+        out+=".out";
+        freopen(out.c_str(),"w",stdout);
+        //printf("#FILE polygon %i\n",k);
+        printf("%i\n",solA.size());
+        pt a={0,0};
+        printf("%i %i\n",a.x,a.y);
+        for(int i=0;i<(int)solA.size()-1;i++)
+            a=a+solA[i],printf("%i %i\n",a.x,a.y);
+        a={0,0};
+        printf("%i\n%i %i\n",solB.size(),a.x,a.y);
+        for(int i=0;i<(int)solB.size()-1;i++)
+            a=a+solB[i],printf("%i %i\n",a.x,a.y);
+        solA.clear();
+        solB.clear();
     }
     printf("%i %i\n",mn,mx);
     return 0;
