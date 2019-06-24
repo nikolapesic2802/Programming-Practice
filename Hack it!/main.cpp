@@ -24,7 +24,7 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-const int L=10,M=5;
+const int L=10,M=5,mod=10039;
 vector<vector<int> > sequences;
 vector<int> seq,ways,fact;
 void gen(int last,int n)
