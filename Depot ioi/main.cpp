@@ -1,3 +1,6 @@
+/*
+    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/IOI/official/2001/sol.pdf
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -24,133 +27,55 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-vector<vector<int> > field;
-vector<pair<int,pair<int,int> > > ins;
 vector<vector<pair<int,pair<int,int> > > > undo;
+vector<pair<int,pair<int,int> > > y;
 vector<vector<int> > order;
-vector<int> roww(16),fieldrow(16);
-vector<bool> napred(16);
+vector<int> values,off;
 int n,N;
-bool insert(int row,int tr)
+bool del(int row,int val)
 {
-    if(roww[tr]<row)
-        return false;
-    if(row==0)
-        undo.pb(ins);
-    if((int)field.size()==row)
+    if(row==-1)
     {
-        if((int)order.size()<=row)
-            return false;
-        if(order[row][0]>tr)
-            return false;
-        if(roww[tr]==row&&order[row][0]!=tr)
-            return false;
-        field.pb({tr});
-        undo.back().pb({-1,{-1,-1}});
-        undo.back().pb({-2,{tr,fieldrow[tr]}});
-        fieldrow[tr]=row;
+        off.pb(val);
         return true;
     }
-    int i=lower_bound(all(field[row]),tr)-field[row].begin();
-    if(i==(int)field[row].size())
-    {
-        if((int)order[row].size()<=(int)field[row].size())
-            return false;
-        if(order[row][i]>tr)
-            return false;
-        if(roww[tr]==row&&order[row][i]!=tr)
-            return false;
-        field[row].pb(tr);
-        undo.back().pb({-1,{row,row}});
-        undo.back().pb({-2,{tr,fieldrow[tr]}});
-        fieldrow[tr]=row;
-        return true;
-    }
-    bool test=insert(row+1,field[row][i]);
-    if(!test)
-        return test;
-    if(order[row][i]>tr)
+    int pos=lower_bound(all(order[row]),val)-order[row].begin();
+    if(pos==0)
         return false;
-    if(roww[tr]==row&&order[row][i]!=tr)
-            return false;
-    undo.back().pb({row,{i,field[row][i]}});
-    field[row][i]=tr;
-    undo.back().pb({-2,{tr,fieldrow[tr]}});
-    fieldrow[tr]=row;
-    return true;
+    pos--;
+    int sta=order[row][pos];
+    undo.back().pb({order[row][pos],{row,pos}});
+    order[row][pos]=val;
+    return del(row-1,sta);
 }
-void undoo()
-{
-    for(auto p:undo.back())
-    {
-        if(p.f==-2)
-        {
-            fieldrow[p.s.f]=p.s.s;
-            continue;
-        }
-        if(p.f==-1)
-        {
-            if(p.s.f==-1)
-                field.pop_back();
-            else
-                field[p.s.f].pop_back();
-        }
-        else
-            field[p.f][p.s.f]=p.s.s;
-    }
-    undo.pop_back();
-}
-vector<int> values;
-bool taken[15];
-vector<int> orderr;
-int cnt=0;
 void genAnswers()
 {
-    if(cnt==N)
+    if(order[0].empty())
     {
-        for(auto p:orderr)
-            printf("%i ",values[p]);
+        for(int i=off.size()-1;i>=0;i--)
+            printf("%i ",values[off[i]]);
         printf("\n");
         return;
     }
-    int manjih=0;
-    for(int i=0;i<N;i++)
+    for(int i=0;i<n;i++)
     {
-        if(!taken[i])
-        {
-            if(roww[i]>manjih)
-                return;
-            manjih++;
-        }
-        else
-        {
-            if(roww[i]-fieldrow[i]>manjih)
-                return;
-        }
-    }
-    for(int i=0;i<N;i++)
-    {
-        if(cnt==0&&!napred[i]){
-            if(!taken[i])
-                manjih++;
+        if(i!=n-1&&order[i].size()==order[i+1].size())
+            continue;
+        undo.pb(y);
+        if(!del(i-1,order[i].back())){
+            undo.pop_back();
             continue;
         }
-        if(!taken[i])
-        {
-            bool tr=insert(0,i);
-            if(tr)
-            {
-                orderr.pb(i);
-                taken[i]=1;
-                cnt++;
-                genAnswers();
-                cnt--;
-                taken[i]=0;
-                orderr.pop_back();
-            }
-            undoo();
-            manjih++;
-        }
+        undo.back().pb({-1,{i,order[i].back()}});
+        order[i].pop_back();
+        genAnswers();
+        for(auto p:undo.back())
+            if(p.f==-1)
+                order[p.s.f].pb(p.s.s);
+            else
+                order[p.s.f][p.s.s]=p.f;
+        undo.pop_back();
+        off.pop_back();
     }
 }
 int main()
@@ -176,18 +101,13 @@ int main()
         for(auto &d:p)
             d=mapa[d];
     for(int i=0;i<(int)order.size();i++)
-        for(auto p:order[i])
-            roww[p]=i;
-    for(int i=0;i<(int)order.size();i++)
         for(int j=1;j<(int)order[i].size();j++)
             if(order[i][j]<order[i][j-1])
                 return 0;
     for(int i=1;i<(int)order.size();i++)
         if(order[i].size()>order[i-1].size())
             return 0;
-    //napred[11]=1;
-    for(int i=0;i<(int)order.size();i++)
-        napred[order[i][0]]=1;
+    order.pb({});
     genAnswers();
     return 0;
 }
