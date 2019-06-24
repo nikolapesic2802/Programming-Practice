@@ -182,6 +182,9 @@ int main()
         for(int j=1;j<(int)order[i].size();j++)
             if(order[i][j]<order[i][j-1])
                 return 0;
+    for(int i=1;i<(int)order.size();i++)
+        if(order[i].size()>order[i-1].size())
+            return 0;
     //napred[11]=1;
     for(int i=0;i<(int)order.size();i++)
         napred[order[i][0]]=1;

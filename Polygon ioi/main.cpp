@@ -24,7 +24,6 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-const int N=910,X=2e5;
 struct pt{
     int x,y;
     pt operator-(pt a){return {x-a.x,y-a.y};}
@@ -39,7 +38,6 @@ bool operator<(pt a,pt b){
     return a.x<b.x;
 }
 bool operator==(pt a,pt b){return a.x==b.x&&a.y==b.y;}
-ll cross(pt a,pt b){return (ll)a.x*b.y-(ll)a.y*b.x;}
 vector<pt> fix(vector<pt> a)
 {
     pt mn=a[0];
@@ -53,24 +51,6 @@ vector<pt> fix(vector<pt> a)
                 nov.pb(a[(i+j)%n]);
     return nov;
 }
-vector<pt> operator*(vector<pt> a,vector<pt> b)
-{
-    a=fix(a);b=fix(b);
-    int na=a.size(),nb=b.size(),i=0,j=0;
-    vector<pt> sum;
-    while(i<na||j<nb)
-    {
-        sum.pb(a[i%na]+b[j%nb]);
-        ll c=cross(a[(i+1)%na]-a[i%na],b[(j+1)%nb]-b[j%nb]);
-        if(c==0)
-            i++,j++;
-        if(c>0)
-            i++;
-        if(c<0)
-            j++;
-    }
-    return sum;
-}
 int gcd(int a,int b)
 {
     if(b==0)
@@ -81,46 +61,74 @@ vector<pt> poly;
 pt start={0,0};
 int m;
 vector<pt> solA,solB;
-bool moze(pt a,int ostaloA,int ind)
+map<pt,pair<pair<int,int>,pair<int,int> > > mapa[2];
+vector<pair<int,int> > nope={{-1,-1}};
+vector<pair<int,int> > moze(pt a,int ostaloA,int ind,bool uzeoB)
 {
     if(ostaloA==0)
     {
-        if(start==a)
-        {
-            if(ind==m)
-                return true;
-            if(moze(a,ostaloA,ind+1))
-            {
-                solB.pb(poly[ind]);
-                return true;
-            }
-        }
-        else
-            return false;
+        pair<pair<int,int>,pair<int,int> > tr=mapa[1][a*-1];
+        if(tr.s.f>=ind)
+            return {tr.f,tr.s};
+        tr=mapa[0][a*-1];
+        if((uzeoB&&tr.s.f>=ind)||tr.s.f>ind)
+            return {tr.f,tr.s};
+        return nope;
     }
     if(ind==m)
-        return false;
+        return nope;
     int g=gcd(abs(poly[ind].x),abs(poly[ind].y));
     for(int i=g;i>=0;i--)
     {
-        if(moze(a+poly[ind]/g*i,ostaloA-(i!=0),ind+1))
+        vector<pair<int,int> > ans=moze(a+poly[ind]/g*i,ostaloA-(i!=0),ind+1,uzeoB||(i!=g));
+        if(ans!=nope)
         {
             if(i)
-                solA.pb(poly[ind]/g*i);
-            if(i!=g)
-                solB.pb(poly[ind]/g*(g-i));
-            return true;
+                ans.pb({ind,i});
+            return ans;
         }
     }
-    return false;
+    return nope;
+}
+void genAll(pt a,int ind,int uzeo,pair<pair<int,int>,pair<int,int> > taken,bool uzeoB)
+{
+    if(uzeo==2)
+    {
+        if(ind!=m)
+            uzeoB=1;
+        mapa[uzeoB][a]=max(mapa[uzeoB][a],taken);
+        return;
+    }
+    if(ind==m)
+        return;
+    int g=gcd(abs(poly[ind].x),abs(poly[ind].y));
+    for(int i=g;i>0;i--)
+        if(uzeo==0)
+            genAll(a+poly[ind]/g*i,ind+1,uzeo+1,{taken.f,{ind,i}},0);
+        else
+            genAll(a+poly[ind]/g*i,ind+1,uzeo+1,{{ind,i},taken.s},uzeoB||(i!=g));
+    genAll(a,ind+1,uzeo,taken,1);
+}
+void getAns(vector<pair<int,int> > ans,int ind)
+{
+    if(ind==m)
+        return;
+    int g=0;
+    int gg=gcd(abs(poly[ind].x),abs(poly[ind].y));
+    if(ans.size()&&ans.back().f==ind)
+        g=ans.back().s,ans.pop_back();
+    if(g)
+        solA.pb(poly[ind]/gg*g);
+    if(g!=gg)
+        solB.pb(poly[ind]/gg*(gg-g));
+    getAns(ans,ind+1);
 }
 int main()
 {
-    /*printf("3\n0 0\n203 1\n101 543\n2\n0 0\n2017 2027\n0 0");
-    return 0;*/
-    int mn=0,mx=0;
 	for(int k=1;k<=11;k++)
     {
+        mapa[0].clear();
+        mapa[1].clear();
         poly.clear();
         string in;
         in+='0'+k/10;
@@ -132,39 +140,56 @@ int main()
         for(int i=0;i<n;i++)
             scanf("%i %i",&poly[i].x,&poly[i].y);
         poly=fix(poly);
-        vector<pt> novi;
+        vector<pt> novi,stari=poly;
         for(int i=0;i<n;i++)
             novi.pb(poly[(i+1)%n]-poly[i]);
         poly=novi;
         m=poly.size();
-        //printf("%i: %i resenje: ",k,poly.size());
-        for(int i=2;i>=2;i--){
-            if(moze(start,i,0))
+        genAll(start,0,0,{{0,0},{0,0}},0);
+        for(int i=2;i>=0;i--){
+            vector<pair<int,int> > ans=moze(start,i,0,0);
+            if(ans!=nope)
             {
-                //printf("%i\n",i);
+                getAns(ans,0);
                 break;
             }
         }
-        reverse(all(solA));
-        reverse(all(solB));
         string out;
         out+='0'+(k)/10;
         out+='0'+(k)%10;
         out+=".out";
         freopen(out.c_str(),"w",stdout);
-        //printf("#FILE polygon %i\n",k);
         printf("%i\n",solA.size());
+        pt minxy={0,0};
         pt a={0,0};
-        printf("%i %i\n",a.x,a.y);
         for(int i=0;i<(int)solA.size()-1;i++)
-            a=a+solA[i],printf("%i %i\n",a.x,a.y);
+            a=a+solA[i],minxy.x=min(minxy.x,a.x),minxy.y=min(minxy.y,a.y);
+        a=minxy*-1;
+        vector<pt> polyA,polyB;
+        polyA.pb(a);
+        for(int i=0;i<(int)solA.size()-1;i++)
+            a=a+solA[i],polyA.pb(a);
         a={0,0};
-        printf("%i\n%i %i\n",solB.size(),a.x,a.y);
+        minxy={0,0};
         for(int i=0;i<(int)solB.size()-1;i++)
-            a=a+solB[i],printf("%i %i\n",a.x,a.y);
+            a=a+solB[i],minxy.x=min(minxy.x,a.x),minxy.y=min(minxy.y,a.y);
+        a=minxy*-1;
+        polyB.pb(a);
+        for(int i=0;i<(int)solB.size()-1;i++)
+            a=a+solB[i],polyB.pb(a);
+        stari=fix(stari);
+        polyA=fix(polyA);
+        polyB=fix(polyB);
+        pt trstart=polyA[0]+polyB[0];
+        pt razlika=stari[0]-trstart;
+        assert(razlika.x>=0&&razlika.y>=0);
+        for(auto p:polyA)
+            printf("%i %i\n",(p+razlika).x,(p+razlika).y);
+        printf("%i\n",solB.size());
+        for(auto p:polyB)
+            printf("%i %i\n",p.x,p.y);
         solA.clear();
         solB.clear();
     }
-    printf("%i %i\n",mn,mx);
     return 0;
 }
