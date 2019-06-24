@@ -99,7 +99,7 @@ int main()
         for(int j=0;j<n;j++)
             if(check(i,j))
                 ans+=ways[i]*ways[j],cnt++;
-    ans/=2;
+    ans/=2; ///maybe
     printf("Answer:%lld  Answer under modulo:%i\n",ans,ans%mod);
     return 0;
 }
