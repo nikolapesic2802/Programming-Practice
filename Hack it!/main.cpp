@@ -26,11 +26,12 @@ template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a
 
 const int L=10,M=5,mod=10039;
 vector<vector<int> > sequences;
-vector<int> seq,ways,fact;
+vector<int> seq,ways,fact,sums;
 void gen(int last,int n)
 {
     if(n==M){
         sequences.pb(seq);
+        //cout << seq << endl;
         return;
     }
     for(int i=last;i>=0;i--){
@@ -41,6 +42,8 @@ void gen(int last,int n)
 }
 bool check(int x,int y)
 {
+    if(sums[x]!=sums[y])    ///Saves a little bit of time 1250 ms -> 1000ms
+        return false;
     vector<int> row=sequences[x],col=sequences[y];
     bool hasTwo=false;
     for(int i=0;i<M;i++)
@@ -69,6 +72,8 @@ void calcWays()
 {
     for(int i=0;i<n;i++)
     {
+        for(int j=0;j<M;j++)
+            sums[i]+=sequences[i][j];
         vector<int> same={1};
         for(int j=1;j<M;j++)
             if(sequences[i][j]==sequences[i][j-1])
@@ -86,6 +91,7 @@ int main()
         fact.pb(fact.back()*i);
 	gen(L,0);
 	n=sequences.size();
+	sums.resize(n);
 	ways.resize(n,fact[5]);
 	calcWays();
 	ll ans=0;
@@ -93,6 +99,7 @@ int main()
         for(int j=0;j<n;j++)
             if(check(i,j))
                 ans+=ways[i]*ways[j];
+    ans/=2;
     printf("Answer:%lld  Answer under modulo:%i\n",ans,ans%mod);
     return 0;
 }
