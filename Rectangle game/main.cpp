@@ -1,3 +1,6 @@
+/*
+    -https://www.oi.edu.pl/old/ioi/downloads/ioi2005-tasks-and-solutions-a5.pdf
+*/
 #include <bits/stdc++.h>
 
 using namespace std;
