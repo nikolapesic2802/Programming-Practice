@@ -1,46 +1,31 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/rope>
-
-#define ll long long
-#define pb push_back
-#define sz(x) (int)(x).size()
-#define mp make_pair
-#define f first
-#define s second
-#define all(x) x.begin(), x.end()
 
 using namespace std;
-using namespace __gnu_pbds;
-using namespace __gnu_cxx;
 
-template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
-template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
-template<class T> ostream& operator<<(ostream& os, const vector<T>& a) {
-	os << '{';
-	for(int i=0;i<sz(a);i++)
-	{
-		if(i>0&&i<sz(a)-1)
-			os << ", ";
-		os << a[i];
-	}
-	os << '}';
-    return os;
-}
-void play(){
-
-}
 int main()
 {
     while(true)
     {
         int x,y;
-        scanf("%i %i",&x,&y);
-        if(x>1)
-            printf("vertical 1\n");
+        cin >> x >> y;
+        if(x<y)
+        {
+            for(int k=0;;k++)
+                if((1<<(k+1))*(x+1)-1>=y)
+                {
+                    cout << "H " << (1<<k)*(x+1)-1 << endl;
+                    y=(1<<k)*(x+1)-1;
+                    break;
+                }
+        }
         else
-            printf("horizontal 1\n");
+            for(int k=0;;k++)
+                if((1<<(k+1))*(y+1)-1>=x){
+                    cout << "V " << (1<<k)*(y+1)-1 << endl;
+                    x=(1<<k)*(y+1)-1;
+                    break;
+                }
+        if(x==1&&y==1)
+            break;
     }
-    return 0;
 }
