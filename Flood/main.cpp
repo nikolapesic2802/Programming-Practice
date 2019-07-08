@@ -1,6 +1,8 @@
 /*
-    -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/IOI/official/2007/editorial.pdf
-    -Alternative model solution
+    -Start from the node with the lowest x coordinate (lowest y if there is a tie)
+    -Always take a right turn first, then forward then left, then backwards.
+    -If we find a loop, all the walls in that loop will be destroyed.
+    -If a wall is not in a loop it will stay.
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -31,44 +33,35 @@ template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a
 const int N=1e5;
 vector<vector<pair<int,int> > > nxt(N,vector<pair<int,int> >(4,{-1,-1}));
 vector<pair<pair<int,int>,int> > nodes;
-vector<pair<int,pair<int,int> > > walls(1);
-vector<int> ans,trwalls;
-int start;
-bool dfs(int tr,int dir)
+vector<int> ans,visited(N);
+int dfs(int tr,int dir)
 {
-    if(tr==start&&dir!=4)
-        return true;
+    if(visited[tr])
+        return tr;
+    visited[tr]=1;
     for(int k=0;k<4;k++)
     {
         int l=(dir+1-k+4)%4;
         int sl=nxt[tr][l].f;
         if(sl==-1)
             continue;
-        trwalls.pb(nxt[tr][l].s);
+        int i=nxt[tr][l].s;
         nxt[tr][l]={-1,-1};
-        if(dfs(sl,l))
-            return true;
-    }
-    return false;
-}
-void doit(int tr)
-{
-    start=tr;
-    dfs(tr,4);
-    sort(all(trwalls));
-    trwalls.pb(-1);
-    for(int i=0,n=trwalls.size()-1;i<n;i++)
-    {
-        if(trwalls[i]==trwalls[i+1])
+        nxt[sl][(l+2)%4]={-1,-1};
+        int loop=dfs(sl,l);
+        if(loop==-1)
         {
-            ans.pb(trwalls[i]);
-            i++;
+            ans.pb(i);
             continue;
         }
-        nxt[walls[trwalls[i]].s.f][walls[trwalls[i]].f]={-1,-1};
-        nxt[walls[trwalls[i]].s.s][walls[trwalls[i]].f+2]={-1,-1};
+        if(loop!=tr)
+        {
+            visited[tr]=0;
+            return loop;
+        }
     }
-    trwalls.clear();
+  	visited[tr]=0;
+  	return -1;
 }
 int main()
 {
@@ -88,7 +81,6 @@ int main()
         {
             if(nodes[a].f.s>nodes[b].f.s)
                 swap(a,b);
-            walls.pb({0,{a,b}});
             nxt[a][0]={b,i};
             nxt[b][2]={a,i};
         }
@@ -96,15 +88,13 @@ int main()
         {
             if(nodes[a].f.f>nodes[b].f.f)
                 swap(a,b);
-            walls.pb({1,{a,b}});
             nxt[a][1]={b,i};
             nxt[b][3]={a,i};
         }
     }
-    sort(nodes.rbegin(),nodes.rend());
+    sort(nodes.begin(),nodes.end());
     for(auto p:nodes)
-        for(int i=0;i<2;i++)
-            doit(p.s);
+        dfs(p.s,0);
     printf("%i\n",ans.size());
     for(auto p:ans)
         printf("%i\n",p);
