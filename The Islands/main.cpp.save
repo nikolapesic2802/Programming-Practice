@@ -3,7 +3,7 @@
     -The answer will be the maximum number of polygons open on a field.
     -Sweep along the y axis (or x).
     -We only need to look at segments of the polygon parallel to the x axis.
-    -For each one determine if it opens or closes a polygon (can be done by sweeping through those segments and maintaining a segment tree of which fields are covered)
+    -For each one determine if it opens or closes a polygon (can be
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -32,7 +32,7 @@ template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << 
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
 const int N=2e5+5;
-vector<int> maxx(4*N),lazy(4*N);
+vector<int> maxx(4*N),lazy(4*N),lazy2(4*N);
 void add(int qs,int qe,int x,int l=0,int r=N-1,int i=1)
 {
     if(qs>r||qe<l)
