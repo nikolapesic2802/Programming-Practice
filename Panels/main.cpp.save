@@ -1,7 +1,3 @@
-/*
-    -https://github.com/zoooma13/Competitive-Programming/blob/master/pan.cpp
-*/
-
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -28,39 +24,54 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
+/// a-b, ima ako je i*((a-1)/i+1)<=b
+///i<=sqrt(b),(a-1)/i+1<=sqrt(b)
+
+/*
+(a-1)/i=m
+
+m<=(a-1)/i<m+1
+m*i<=(a-1)<(m+1)*i
+
+i<=(a-1)/m
+i>(a-1)/(m+1)
+
+
+*/
 int main()
 {
+    //freopen("in.txt","r",stdin);
 	int n;
 	scanf("%i",&n);
+	int lim=31625;
 	while(n--)
     {
         int a,b,c,d;
         scanf("%i %i %i %i",&a,&b,&c,&d);
         vector<int> div1,div2;
-        int sol=-1,lim=max(sqrt(b)+1,sqrt(d)+1);
+        int sol=1;
+        for(int i=lim;i>=1;i--)
+            if(i*((a-1)/i+1)<=b&&i*((c-1)/i+1)<=d)
+            {
+                sol=i;
+                break;
+            }
         vector<pair<int,int> > ranges1={{a,b}},ranges2={{c,d}};
         for(int m=1;m<lim;m++)
-            ranges1.pb({(a-1)/(m+1)+1,min((a-1)/m,b/(m+1))}),ranges2.pb({(c-1)/(m+1)+1,min((c-1)/m,d/(m+1))});
+            ranges1.pb({(a-1)/(m+1)+1,min((a-1)/m,b/m)}),ranges2.pb({(c-1)/(m+1)+1,min((c-1)/m,d/m)});
         int i=0,j=0;
-        while(i<(int)ranges1.size()&&j<(int)ranges2.size()&&ranges1[i].s>lim&&ranges2[j].s>lim)
+        while(i<ranges1.size()&&j<ranges2.size()&&ranges1[i].s>lim&&ranges2[i].s>lim)
         {
             if(max(ranges1[i].f,ranges2[j].f)<=min(ranges1[i].s,ranges2[j].s))
             {
-                sol=min(ranges1[i].s,ranges2[j].s);
+                sol=max(sol,min(ranges1[i].s,ranges2[j].s));
                 break;
             }
-            if(ranges1[i].f>ranges2[j].f)
+            if(ranges1[i].s>ranges2[j].s)
                 i++;
             else
                 j++;
         }
-        if(sol==-1)
-            for(int i=lim;i>=1;i--)
-                if(i*((a-1)/i+1)<=b&&i*((c-1)/i+1)<=d)
-                {
-                    sol=i;
-                    break;
-                }
         printf("%i\n",sol);
     }
     return 0;
