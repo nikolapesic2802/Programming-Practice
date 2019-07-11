@@ -1,3 +1,9 @@
+/*
+    -Calculate the distance between every pair of points {1,2,3,...,k+1,n} by running dijkstra k+2 times.
+    -Then do bitmask dp to find the shortest path.
+    -It requires a memory optimization to use less than O(k*2^k) memory.
+    -This can be done by noticing that the last visited will always be a 1 in the bitmask and not memorise it in the state and therefore use O(k*2^(k-1)) memory which is enough.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -25,52 +31,61 @@ template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << 
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
 int dp[20][1<<19];
-const int N=2e4+5,L=(1<<19)-1;
+const int N=2e4+5,oo=INT_MAX/2;
 vector<vector<pair<int,int> > > graf(N);
 vector<int> dist(N),distEnd(N);
 int u[20][20];
-vector<vector<int> > no(N);
+vector<int> no(21);
+int n,m,k;
 void calcDist(int tr)
 {
     fill(all(dist),INT_MAX);
     dist[tr]=0;
     set<pair<int,int> > s;
-    s.insert({tr,0});
+    s.insert({0,tr});
+    int cnt=0;
     while(s.size())
     {
         pair<int,int> t=*s.begin();
         s.erase(s.begin());
-        if(t.s>dist[t.f])
+        if(t.f>dist[t.s])
             continue;
-        for(auto p:graf[t.f])
-            if(dist[p.f]>t.s+p.s)
-                dist[p.f]=t.s+p.s,s.insert({p.f,dist[p.f]});
+        cnt++;
+        for(auto p:graf[t.s])
+            if(dist[p.f]>t.f+p.s)
+                dist[p.f]=t.f+p.s,s.insert({dist[p.f],p.f});
     }
 }
-int n,m,k;
+int shrink(int mask,int last)
+{
+    int i=(1<<last)-1;
+    int t=mask&i;
+    mask>>=last+1;
+    mask<<=last;
+    mask+=t;
+    return mask;
+}
 int calc(int last,int mask)
 {
+    int msk=shrink(mask,last);
     if(mask==(1<<k)-1)
         return distEnd[last+1];
-    if(dp[last][mask]!=-1)
-        return dp[last][mask];
-    dp[last][mask]=INT_MAX/2;
+    if(dp[last][msk]!=-1)
+        return dp[last][msk];
+    dp[last][msk]=oo;
     for(int i=0;i<k;i++)
     {
+        if(i==last)
+            continue;
         if(mask&(1<<i))
             continue;
-        bool moze=false;
-        for(auto p:no[i])
-            if((mask&(1<<p))==0)
-            {
-                moze=true;
-                break;
-            }
-        if(moze)
+        if((mask&no[i])!=no[i])
             continue;
-        dp[last][mask]=min(dp[last][mask],u[last][i]+calc(i,mask|(1<<i)));
+        int sol=calc(i,mask|(1<<i));
+        if((ll)sol+u[last][i]<oo)
+            dp[last][msk]=min(dp[last][msk],u[last][i]+sol);
     }
-    return dp[last][mask];
+    return dp[last][msk];
 }
 int main()
 {
@@ -100,12 +115,17 @@ int main()
         scanf("%i %i",&r,&s);
         r-=2;
         s-=2;
-        no[s].pb(r);
+        no[s]|=1<<r;
     }
     int sol=INT_MAX;
+    if(k==0)
+        sol=dist[n-1];
     for(int i=0;i<k;i++)
-        if(no[i].size()==0)
-            sol=min(sol,dist[i+1]+calc(i,1<<i));
+        if(no[i]==0){
+            int tr=calc(i,1<<i);
+            if((ll)tr+dist[i+1]<oo)
+                sol=min(sol,dist[i+1]+tr);
+        }
     printf("%i\n",sol);
     return 0;
 }
