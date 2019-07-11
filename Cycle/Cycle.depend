@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1562861947 source:c:\users\nikip\onedrive\programming practice\cycle\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+	<ext/rope>
+	"cycle.h"
+
+1562779186 c:\users\nikip\onedrive\programming practice\cycle\cycle.h
+
