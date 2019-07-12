@@ -1,3 +1,8 @@
+/*
+    -For some given strings its always optimal to place all the letters they have in common at the beginning.
+    -For each mask we will calculate the number of common letters and the answer will be calc(subset mask)+calc(subset mask^mask)-number of common letters since we will count them twice.
+    -To go over all subset mask we can use a for loop and the total complexity will be O(3^n)
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -24,93 +29,42 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
-const int N=10;
-int tabla[N][N];
-int x=N/2,y=N/2;
-vector<char> mapa={'.','X','#','P'};
-bool nasaoPickaxe=false;
-int materijali;
-bool inside(int x,int y)
+const int N=16,L=26;
+int dp[1<<N],cnt[N][L],n;
+int calc(int mask)
 {
-    return x>=0&&x<N&&y>=0&&y<N&&(tabla[x][y]==0||tabla[x][y]==3||(tabla[x][y]==2&&nasaoPickaxe));
-}
-void printBoard()
-{
-    system("cls");
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N;j++)
-            printf("%c",mapa[tabla[i][j]]);
-        printf("\n");
-    }
-    printf("Materijali: %i\n",materijali);
-}
-void dodajZidove()
-{
-    int L=20;
-    while(L)
-    {
-        int x=rng()%N,y=rng()%N;
-        if(tabla[x][y]==0)
-        {
-            tabla[x][y]=2;
-            L--;
-        }
-    }
-}
-void dodajPickaxe()
-{
-    int L=1;
-    while(L)
-    {
-        int x=rng()%N,y=rng()%N;
-        if(tabla[x][y]==0)
-        {
-            tabla[x][y]=3;
-            L--;
-        }
-    }
+    int c=__builtin_popcount(mask);
+    if(dp[mask]!=-1)
+        return dp[mask];
+    vector<int> minn(L,INT_MAX);
+    int total=0;
+    for(int i=0;i<n;i++)
+        if(mask&(1<<i))
+            for(int j=0;j<L;j++)
+                minn[j]=min(minn[j],cnt[i][j]),total+=cnt[i][j];
+    int sum=0;
+    for(auto p:minn)
+        sum+=p;
+    if(total%c==0&&total/c==sum)
+        return dp[mask]=sum;
+    dp[mask]=INT_MAX;
+    for(int j=(mask-1)&mask;j;j=(j-1)&mask)
+        dp[mask]=min(dp[mask],calc(j)+calc(j^mask)-sum);
+    return dp[mask];
 }
 int main()
 {
-    cout << '\a';
-    tabla[x][y]=1;
-    dodajZidove();
-    dodajPickaxe();
-	while(true)
+    memset(dp,-1,sizeof(dp));
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cin >> n;
+    for(int i=0;i<n;i++)
     {
-        printBoard();
         string s;
         cin >> s;
-        tabla[x][y]=0;
-        if(s=="w")
-            if(inside(x-1,y))
-                x--;
-        if(s=="a")
-            if(inside(x,y-1))
-                y--;
-        if(s=="s")
-            if(inside(x+1,y))
-                x++;
-        if(s=="d")
-            if(inside(x,y+1))
-                y++;
-        if(s=="bw")
-            if(inside(x-1,y)&&tabla[x-1][y]==0)
-                tabla[x-1][y]=2,materijali--;
-        if(s=="ba")
-            if(inside(x,y-1)&&tabla[x][y-1]==0)
-                tabla[x][y-1]=2,materijali--;
-        if(s=="bs")
-            if(inside(x+1,y)&&tabla[x+1][y]==0)
-                tabla[x+1][y]=2,materijali--;
-        if(s=="bd")
-            if(inside(x,y+1)&&tabla[x][y+1]==0)
-                tabla[x][y+1]=2,materijali--;
-        if(tabla[x][y]==3)
-            nasaoPickaxe=true;
-        if(tabla[x][y]==2)
-            materijali++;
-        tabla[x][y]=1;
+        for(auto p:s)
+            cnt[i][p-'a']++;
     }
+    cout << calc((1<<n)-1)+1 << endl;
     return 0;
 }
