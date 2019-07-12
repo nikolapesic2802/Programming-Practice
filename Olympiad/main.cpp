@@ -72,7 +72,7 @@ struct o{
                         continue;
                     visited[a.get_hash()]=true;
                     a.calcScore();
-                    assert(a.score<=score);
+                    //assert(a.score<=score);
                     ok.insert(a);
                 }
             novi.insert(b);
@@ -108,6 +108,7 @@ int main()
             visited[start.get_hash()]=1;
             start.calcScore();
             ok.insert(start);
+            start.add_values();
         }
     }
     for(int j=0;j<n&&(int)best.s.size()<k;j++)
