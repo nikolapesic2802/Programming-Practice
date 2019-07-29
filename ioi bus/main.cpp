@@ -1,3 +1,4 @@
+// -https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/IOI/official/2002/bus-handout.pdf
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -24,21 +25,27 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';i
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
 
+int d[505][505],x[505],y[505],a[505],q;
+bool cmp(int a,int b){return d[a][q]>d[b][q];}
 int main()
 {
-	int n;
+	int n,sol=INT_MAX;
 	scanf("%i",&n);
 	vector<pair<int,int> > p(n);
 	for(int i=0;i<n;i++)
-        scanf("%i %i",&p[i].f,&p[i].s);
-    int sol=INT_MAX;
+        scanf("%i %i",&x[i],&y[i]),a[i]=i;
     for(int i=0;i<n;i++)
-    {
-        vector<int> dist;
         for(int j=0;j<n;j++)
-            dist.pb(abs(p[i].f-p[j].f)+abs(p[i].s-p[j].s));
-        sort(dist.rbegin(),dist.rend());
-        sol=min(sol,dist[0]+dist[1]);
+            d[i][j]=abs(x[i]-x[j])+abs(y[i]-y[j]);
+    for(int i=0;i<n;i++){
+        q=i;
+        sort(a,a+n,cmp);
+        for(int j=0;j<n;j++){
+            int low=0;
+            for(int k=0;k<n;k++)
+                if(d[j][a[low]]<d[j][a[k]])
+                    sol=min(sol,d[i][j]+d[j][a[low]]+d[i][a[k]]),low=k;
+        }
     }
     printf("%i\n",sol);
     return 0;
