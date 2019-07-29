@@ -1,3 +1,7 @@
+/*
+    -First for every value in [0,2^m) find what is the sum of the products of all subsets with the AND value&current value=current value.
+    -Then use inclusion-exclusion to calculate the answer.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
