@@ -1,3 +1,8 @@
+Problem:
+You are given a 3d grid where some spaces are full of stone ('N') and some are full of air ('P')
+You need to find a cuboid that is completely made up of stone, has two sides of equal length, and has the maximum value of 4*a*b, where a and b are the two different length values among the sides.
+Print that maximum value of 4*a*b.
+Solution:
 First lets fix in which two dimensions the square will be located in.
 There are 3 possible combinations and we can run the solution for each one.
 Now dp[x][y][z] will store the biggest square that can be formed with the cube (x,y,z) and the cubes with coordinates (i,j,z) where i<x and j<y.
