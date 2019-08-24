@@ -1,3 +1,7 @@
+/*
+    -dp[i][mask] is the number of ways too choose a connected subgraph in the subtree of i such that it contains i and has AND value equal to mask.
+    -When merging children we can use dp sos to calculate new dp as dp[a][mask]=sum(dp[a][x]*dp[b][y]) where b is a child of a and x&y=mask.
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -43,34 +47,43 @@ int mul(int a,int b)
     return (ll)a*b%mod;
 }
 int n,m,M,a,b;
-vector<vector<int> > graf;
-vector<int> mask;
-vector<int>
+vector<vector<int> > graf(5555);
+vector<int> mask(5555);
+vector<int> total(1<<10);
 vector<int> solve(int tr,int par)
 {
-    printf("%i %i\n",tr,par);
-    vector<int> sol(M),novi(M);
+    vector<int> sol(M);
     sol[mask[tr]]++;
     for(auto p:graf[tr])
     {
         if(p==par)
             continue;
         auto aa=solve(p,tr);
+        vector<int> s=sol;
         for(int i=0;i<M;i++)
+            total[i]=add(total[i],aa[i]);
+        for(int i=0;i<m;i++)
             for(int j=0;j<M;j++)
-                if((i&j)==i)
-                    sol[j]*=aa[i];
+                if(j&(1<<i))
+                    aa[j^(1<<i)]=add(aa[j^(1<<i)],aa[j]),s[j^(1<<i)]=add(s[j^(1<<i)],s[j]);
         for(int i=0;i<M;i++)
-            sol[i]+=aa[i];
+            aa[i]=mul(aa[i],s[i]);
+        for(int i=0;i<m;i++)
+            for(int j=0;j<M;j++)
+                if(j&(1<<i))
+                    aa[j^(1<<i)]=sub(aa[j^(1<<i)],aa[j]);
+        for(int i=0;i<M;i++)
+            sol[i]=add(sol[i],aa[i]);
     }
     return sol;
 }
 void test()
 {
-    graf.clear();
+    for(auto &p:graf)
+        p.clear();
+    for(auto &p:total)
+        p=0;
     scanf("%i %i",&n,&m);
-    graf.resize(n);
-    mask.resize(n);
     M=1<<m;
     for(int i=1;i<n;i++)
         scanf("%i %i",&a,&b),graf[a-1].pb(b-1),graf[b-1].pb(a-1);
@@ -82,9 +95,11 @@ void test()
         mask[i]=nxt;
     }
     auto tr=solve(0,0);
+    for(int i=0;i<M;i++)
+        total[i]=add(total[i],tr[i]);
     vector<int> sol(m+1);
     for(int i=0;i<M;i++)
-        sol[__builtin_popcount(i)]=add(sol[__builtin_popcount(i)],tr[i]);
+        sol[__builtin_popcount(i)]=add(sol[__builtin_popcount(i)],total[i]);
     for(int i=0;i<=m;i++)
         printf("%i ",sol[i]);
     printf("\n");
