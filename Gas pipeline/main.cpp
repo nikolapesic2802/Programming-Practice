@@ -1,3 +1,8 @@
+/*
+    -Do a sweep by increasing x axis.
+    -Keep a set of extraction points.
+    -When we get to a distribution station, match it to the extraction point with the closest y coordinate to it (but it has to be greater or equal, lower_bound in set works great for that)
+*/
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
