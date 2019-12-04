@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1575479836 source:c:\users\nikip\desktop\onedrive\programming practice\double row\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
