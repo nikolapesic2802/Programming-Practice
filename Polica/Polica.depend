@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1576362627 source:c:\users\nikip\desktop\onedrive\programming practice\polica\main.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
