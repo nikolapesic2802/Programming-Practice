@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+#define ll long long
+#define pb push_back
+#define mp make_pair
+#define f first
+#define s second
+#define sz(x) (int)x.size()
+#define all(x) x.begin(), x.end()
+
+using namespace std;
+using namespace __gnu_pbds;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const gp_hash_table<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+
+int cnt=0;
+int solve(vector<int> a,vector<int> b){
+    cnt++;
+    //cout << a << b << endl;
+    int n=a.size(),m=b.size();
+    map<int,int> prviA,prviB,backA,backB;
+    set<int> A,B;
+    for(int i=0;i<n;i++)
+        A.insert(a[i]);
+    for(int i=0;i<m;i++)
+        B.insert(b[i]);
+    if(A!=B){
+        nasao=true;
+        return 0;
+    }
+    if(A.size()==1)
+        return 1;
+    for(int i=0;i<n;i++)
+        if(prviA.find(a[i])==prviA.end())
+            prviA[a[i]]=i;
+    for(int i=0;i<m;i++)
+        if(prviB.find(b[i])==prviB.end())
+            prviB[b[i]]=i;
+    for(int i=n-1;i>=0;i--)
+        if(backA.find(a[i])==backA.end())
+            backA[a[i]]=i;
+    for(int i=m-1;i>=0;i--)
+        if(backB.find(b[i])==backB.end())
+            backB[b[i]]=i;
+    int pA=0,pB=0,sA=n,sB=m;
+    for(auto p:prviA)
+        pA=max(pA,p.s);
+    for(auto p:prviB)
+        pB=max(pB,p.s);
+    for(auto p:backA)
+        sA=min(sA,p.s);
+    for(auto p:backB)
+        sB=min(sB,p.s);
+    vector<int> prA,prB,suA,suB;
+    for(int i=0;i<pA;i++)
+        prA.pb(a[i]);
+    for(int i=0;i<pB;i++)
+        prB.pb(b[i]);
+    for(int i=n-1;i>sA;i--)
+        suA.pb(a[i]);
+    for(int i=m-1;i>sB;i--)
+        suB.pb(b[i]);
+    reverse(all(suA));
+    reverse(all(suB));
+    return solve(prA,prB)&&solve(suA,suB);
+}
+int main()
+{
+	//freopen("in.txt","r",stdin);
+	//freopen("out.txt","w",stdout);
+	int k;
+	scanf("%i",&k);
+	while(k--){
+        int n,m;
+        scanf("%i %i",&n,&m);
+        vector<int> a(n),b(m);
+        for(int i=0;i<n;i++)
+            scanf("%i",&a[i]);
+        for(int i=0;i<m;i++)
+            scanf("%i",&b[i]);
+        if(solve(a,b)==0){
+            printf("0\n");
+            contin
+        }
+        printf("1\n");
+        return 0;
+        printf("%i\n",solve(a,b));
+	}
+    return 0;
+}
