@@ -43,10 +43,19 @@ int sub(int a,int b){
 int mul(int a,int b){
     return (ll)a*b%mod;
 }
+int pwrmod(int x,int k){
+    int ans=1;
+    for(;k;k>>=1,x=mul(x,x))
+        if(k&1)
+            ans=mul(ans,x);
+    return ans;
+}
 string s;
 vector<int> h(N),pwr(N,1);
 int n;
 int get(int l,int r){
+    if(l>r)
+        return 0;
     int ans=h[r];
     if(l)
         ans=sub(ans,mul(h[l-1],pwr[r-l+1]));
