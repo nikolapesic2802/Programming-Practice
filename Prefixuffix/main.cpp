@@ -51,10 +51,15 @@ string s;
 vector<int> h(N),pwr(N,1);
 int n;
 int get(int l,int r){
+    if(l>r)
+        return 0;
     int ans=h[r];
     if(l)
         ans=sub(ans,mul(h[l-1],pwr[r-l+1]));
     return ans;
+}
+int meld(int l,int r,int l1,int r1){
+    return add(mul(get(l,r),pwr[r1-l1+1]),get(l1,r1));
 }
 int main()
 {
@@ -66,14 +71,14 @@ int main()
 	h[0]=s[0]-'a';
 	for(int i=1;i<n;i++)
         h[i]=add(mul(h[i-1],pu),s[i]-'a');
-    int ans=0;
-    for(int i=0;i<n/2;i++)
-        if(get(0,i)==get(n-1-i,n-1)){
-            ans=max(ans,i+1);
-            for(int m=0;m<n/2-i-1;m++)
-                if(get(i+1,i+1+m)==get(n-i-2-m,n-2-i))
-                    ans=max(ans,i+2+m);
+    vector<int> ha(n);
+    int best=0;
+    for(int i=0;i<n/2;i++){
+        int l=0,r=i+1;
+        while(l<r){
+            int m=(l+r)>>1;
+            int ri
         }
-    printf("%i\n",ans);
+    }
     return 0;
 }
