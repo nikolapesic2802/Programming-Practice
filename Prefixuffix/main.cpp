@@ -1,5 +1,11 @@
 /*
-    -Alternative solution from the editorial
+    -The solution is uvTvu where u,v,T are some strings.
+    -Use hashing to check if two substrings are equal with constant time and O(n) preprocessing.
+    -If we can find the longest length of v for every size of u, that is enough to solve the task. (we can just go through every length of u, and if the prefix is the same as the suffix of that length, we can make a solution of size len(u) + maxLen(v)).
+    -Write a[0] as the maximum length of v when we take 0 as the length of u, a[1], the maximum when we take 1 as the length of u, ans so on.
+    -It holds that a[i-1]<=a[i]+2. (It's pretty simple to understand why when you draw a picture, editorial has a nice picture to make it clear).
+    -Now start by calculating a[n/2]. Now we know that a[n/2-1] is smaller than or equal to a[n/2]+2, so we can start from that value, and go down until we find a value that works.
+    -Do this for every a[i] in decreasing order. Notice that we will do O(n) steps in total over all a[i]. So our algorithm is O(n).
 */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
