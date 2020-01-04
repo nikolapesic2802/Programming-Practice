@@ -1,0 +1,166 @@
+/*
+    -Do sqrt decomposition on queries. For each edge for each value it changed to, add that edge to the sqrt decomposition in the interval where it was equal to that value.
+    -We will add at most q sqrt q edges to our sqrt decomposition.
+    -Now go and answer the queries maintaining a DSU of connected components. We can use 2 DSU's with clear operations to do this in a ok complexity. One dsu for the edges we add to the whole interval of sqrt queries and one for the single ones.
+    -We also need to sort the edges that we add to the whole block and add them in order when we get to a query that allows it (sort the queries by weight too).
+    -For the single ones we only keep the edges with weight greater than the weight of the car in the query.
+    -Do this sorting before adding then to the sqrt structure to get O(q log q) complexity and not O(q sqrt q log n).
+*/
+
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
+
+#define ll long long
+#define pb push_back
+#define sz(x) (int)(x).size()
+#define mp make_pair
+#define f first
+#define s second
+#define all(x) x.begin(), x.end()
+#define D(x) cerr << #x << " is " << (x) << "\n";
+
+using namespace std;
+using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update>; ///find_by_order(),order_of_key()
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1,T2>& a) { os << '{' << a.f << ", " << a.s << '}'; return os; }
+template<class T> ostream& operator<<(ostream& os, const vector<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const deque<T>& a){os << '{';for(int i=0;i<sz(a);i++){if(i>0&&i<sz(a))os << ", ";os << a[i];}os<<'}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const set<T,greater<T> >& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T> ostream& operator<<(ostream& os, const multiset<T,greater<T> >& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+template<class T1,class T2> ostream& operator<<(ostream& os, const map<T1,T2>& a) {os << '{';int i=0;for(auto p:a){if(i>0&&i<sz(a))os << ", ";os << p;i++;}os << '}';return os;}
+
+const int N=1e5+5,L=317;
+int u[N],v[N],w[N],last[N],qu[N],qw[N],ans[N];
+vector<int> pojedinacno[N];
+vector<pair<int,int> > arr[N/L];
+int n,m,q,tr;
+void add(int l,int r,int in,int w){
+    int le=l/L,ri=r/L;
+    if(le==ri){
+        if(l==le*L&&r==min(tr-1,(ri+1)*L-1)){
+            arr[le].pb({w,in});
+            return;
+        }
+        for(int i=l;i<=r;i++)
+            if(qw[i]<=w)
+                pojedinacno[i].pb(in);
+        return;
+    }
+    if(l==le*L)
+        le--;
+    else
+        for(int i=l;i<(le+1)*L;i++)
+            if(qw[i]<=w)
+                pojedinacno[i].pb(in);
+    if(r==min(tr-1,(ri+1)*L-1)){
+        for(int i=le+1;i<=ri;i++)
+            arr[i].pb({w,in});
+    }
+    else{
+        for(int i=le+1;i<ri;i++)
+            arr[i].pb({w,in});
+        for(int i=ri*L;i<=r;i++)
+            if(qw[i]<=w)
+                pojedinacno[i].pb(in);
+    }
+
+}
+struct DSU{
+    vector<int> p,siz,in,undo;
+    DSU(){p.resize(N);siz.resize(N,1);in.resize(N);iota(all(p),0);}
+    void reset(){
+        for(auto d:undo)
+            p[d]=d,in[d]=0,siz[d]=1;
+        undo.clear();
+    }
+    int find(int tr){return tr==p[tr]?tr:p[tr]=find(p[tr]);}
+    void merge(int a,int b){
+        a=find(a);
+        b=find(b);
+        if(!in[a])
+            in[a]=1,undo.pb(a);
+        if(a==b)
+            return;
+        if(!in[b])
+            in[b]=1,undo.pb(b);
+        if(siz[a]<siz[b]){
+            siz[b]+=siz[a];
+            p[a]=b;
+        }
+        else{
+            siz[a]+=siz[b];
+            p[b]=a;
+        }
+    }
+};
+void solve(){
+    DSU global,moj;
+    for(int i=0;i<N/L;i++){
+        global.reset();
+        vector<pair<pair<int,int>,int> > query;
+        for(int j=i*L;j<min(tr,(i+1)*L)&&~qu[j];j++)
+            query.pb({{qw[j],qu[j]},j});
+        sort(all(query));
+        reverse(all(query));
+        int ind=0;
+        for(auto p:query){
+            while(ind<arr[i].size()&&arr[i][ind].f>=p.f.f)
+                global.merge(u[arr[i][ind].s],v[arr[i][ind].s]),ind++;
+            moj.reset();
+            for(auto d:pojedinacno[p.s]){
+                int uu=global.find(u[d]),vv=global.find(v[d]);
+                if(moj.siz[uu]<global.siz[uu])
+                    moj.siz[uu]=global.siz[uu];
+                if(moj.siz[vv]<global.siz[vv])
+                    moj.siz[vv]=global.siz[vv];
+                moj.merge(uu,vv);
+            }
+            ans[p.s]=max(moj.siz[moj.find(global.find(p.f.s))],global.siz[moj.find(global.find(p.f.s))]);
+        }
+        for(int j=i*L;j<min(tr,(i+1)*L)&&~qu[j];j++)
+            printf("%i\n",ans[j]);
+    }
+}
+int main()
+{
+    for(int i=0;i<N;i++)
+        qu[i]=-1;
+	scanf("%i %i",&n,&m);
+	for(int i=0;i<m;i++)
+        scanf("%i %i %i",&u[i],&v[i],&w[i]),u[i]--,v[i]--;
+    scanf("%i",&q);
+    vector<tuple<int,int,int,int> > ad;
+    for(int i=0;i<q;i++){
+        int t,a,b;
+        scanf("%i %i %i",&t,&a,&b);
+        a--;
+        if(t==2){
+            qu[tr]=a;
+            qw[tr++]=b;
+        }else{
+            if(last[a]!=tr)
+                ad.pb(make_tuple(w[a],tr-1,a,last[a]));
+            last[a]=tr;
+            w[a]=b;
+        }
+    }
+    for(int i=0;i<m;i++)
+        if(last[i]!=tr)
+            ad.pb(make_tuple(w[i],tr-1,i,last[i]));
+    sort(all(ad));
+    reverse(all(ad));
+    for(auto p:ad){
+        int a,b,c,d;
+        tie(d,b,c,a)=p;
+        add(a,b,c,d);
+    }
+    solve();
+    return 0;
+}
