@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "grader.h"
+//#include "grader.h"
 
 #define ll long long
 #define pb push_back
@@ -58,4 +58,7 @@ void decode(int n,int h){
     for(int i=0;i<h;i++)
         for(int j=0;j<n;j++)
             hops(i,j,recieve());
+}
+int main(){
+    freopen("saveit/grader.in.01")
 }
