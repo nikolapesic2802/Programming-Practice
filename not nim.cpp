@@ -112,85 +112,33 @@ void print(vector<int> a,int player){
         }
     }
 }
+void test(){
+    int n=3000;
+    int sol=n;
+    for(int i=1;i<=n;i++){
+        int tr=i;
+        while(tr)
+            sol++,tr/=2;
+    }
+    printf("%i- %i\n",2*sol-1,2*(sol-n+1)-1);
+}
 int main()
 {
+    //test();
 	//freopen("in.txt","r",stdin);
 	//freopen("out.txt","w",stdout);
 	scanf("%i",&n);
 	//n=3000;
-	vector<int> sameEven,sameOdd,v;
-	vector<pair<int,int> > apart;
+	vector<int> v;
 	for(int i=0;i<n;i++){
         int b;
         b=i+1;
         scanf("%i",&b);
-        if(b%2==0)
-            sameEven.pb(b);
-        else
-            sameOdd.pb(b);
         v.pb(b);
         v.pb(b);
-	}
-	int sol=0;
-	while(true){
-        //cout << sameEven << sameOdd << apart << endl;
-        if(apart.size()){
-            auto tr=apart.back();
-            apart.pop_back();
-            if(tr.f==0||tr.s==0){
-                if(sameEven.size()+sameOdd.size()+apart.size()==0){
-                    sol++;
-                    break;
-                }
-                if(apart.size())
-                    assert(0);
-                if(sameOdd.size()){
-                    auto tr=sameOdd.back();
-                    sameOdd.pop_back();
-                    apart.pb({tr+1,tr-1});
-                    sol+=2;
-                    continue;
-                }
-                auto tr=sameEven.back();
-                sameEven.pop_back();
-                apart.pb({tr+1,tr-1});
-                sol+=2;
-                continue;
-            }
-            else{
-                int a=min(tr.f,tr.s)/2,b=min(tr.f,tr.s)-a;
-                if(a!=b)
-                    apart.pb({a,b});
-                else
-                    if(a%2==0)
-                        sameEven.pb(a);
-                    else
-                        sameOdd.pb(a);
-                sol+=2;
-                continue;
-            }
-        }
-        if(sameOdd.size()){
-            auto tr=sameOdd.back();
-            sameOdd.pop_back();
-            apart.pb({tr/2,tr-tr/2});
-            sol+=2;
-            continue;
-        }
-        if(sameEven.size()){
-            auto tr=sameEven.back();
-            sameEven.pop_back();
-            if((tr/2)%2==0)
-                sameEven.pb(tr/2);
-            else
-                sameOdd.pb(tr/2);
-            sol+=2;
-            continue;
-        }
-        assert(0);
 	}
 	n*=2;
-	printf("%i %i\n",sol,brute(v,0));
+	printf("%i\n",brute(v,0));
 	print(v,0);
     return 0;
 }
