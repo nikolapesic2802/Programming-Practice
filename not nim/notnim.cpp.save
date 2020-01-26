@@ -112,6 +112,15 @@ void print(vector<int> a,int player){
         }
     }
 }
+bool ok(int tr){
+    int d=4;
+    while(d<=tr)
+        d*=2;
+    int dist=d-tr-1;
+    if(dist<d/4)
+        return 0;
+    return 1;
+}
 void test(){
     int n=3000;
     int sol=n;
@@ -119,26 +128,63 @@ void test(){
         int tr=i;
         while(tr)
             sol++,tr/=2;
+        sol-=ok(i);
     }
-    printf("%i- %i\n",2*sol-1,2*(sol-n+1)-1);
+    printf("%i!\n",2*sol-1);
+    //printf("%i- %i\n",2*sol-1,2*(sol-n+1)-1);
 }
 int main()
 {
-    //test();
-	//freopen("in.txt","r",stdin);
-	//freopen("out.txt","w",stdout);
-	scanf("%i",&n);
-	//n=3000;
-	vector<int> v;
-	for(int i=0;i<n;i++){
-        int b;
-        b=i+1;
-        scanf("%i",&b);
-        v.pb(b);
-        v.pb(b);
+    scanf("%i",&n);
+    int sol=n;
+    int oduzeo=0;
+    for(int i=0;i<n;i++){
+        int a;
+        scanf("%i",&a);
+        int tr=a;
+        while(tr)
+            sol++,tr/=2;
+        sol-=ok(a);
+        oduzeo+=ok(a);
+    }
+    if(oduzeo==n)
+        sol++;
+    printf("%i\n",2*sol-1);
+    return 0;
+    test();
+	
+	int l=2;
+	while(true){
+        dp.clear();
+        n=l++;
+        //printf("%i!\n",n);
+        scanf("%i",&n);
+        //n=3000;
+        vector<int> v;
+        v.pb(1);
+        v.pb(0);
+        v.pb(n);
+        v.pb(n);
+        /*for(int i=0;i<n;i++){
+            int b;
+            b=i+1;
+            scanf("%i",&b);
+            v.pb(b);
+            v.pb(b);
+        }*/
+        int cnt=1;
+        int tr=n;
+        while(tr)
+            cnt++,tr/=2;
+        n*=2;
+        n=4;
+        /*int oo=brute(v,0);
+        if(oo!=2*cnt-1){
+            printf("%i!\n",l-1);
+            //print(v,0);
+        }*/
+        printf("%i %i\n",2*cnt-1,brute(v,0));
+        print(v,0);
 	}
-	n*=2;
-	printf("%i\n",brute(v,0));
-	print(v,0);
     return 0;
 }
