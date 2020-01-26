@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-    int n,a,sol=0,saved=0;
+    int n,a,sol=0;
     priority_queue<int> q;
     scanf("%i",&n);
     for(int i=0;i<n;i++){
