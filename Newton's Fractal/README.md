@@ -1,4 +1,4 @@
-Fractal making program for 6 different root finding methods, inspired by https://www.youtube.com/watch?v=-RdOwhmqP5s&ab_channel=3Blue1Brown.
+Fractal making program for 7 different root finding methods, inspired by https://www.youtube.com/watch?v=-RdOwhmqP5s&ab_channel=3Blue1Brown.
 - Features:
   - Customize the number of roots
   - Coloring based on the number of iterations taken
