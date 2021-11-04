@@ -1,6 +1,6 @@
 Fractal making program for 7 different root finding methods, inspired by [3Blue1Brown's video](https://www.youtube.com/watch?v=-RdOwhmqP5s&ab_channel=3Blue1Brown).
 - Features:
-  - Customize the roots (Select the pointer left of "World space:" and just drag the colored points around)
+  - Customize the roots (Select the pointer left of "World space:" (at the top left) and just drag the colored points around)
   - Coloring based on the number of iterations taken
   - Super Sampling
   - Extra coefficient customization
