@@ -2,6 +2,8 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mars.drawingx.application.DrawingApplication;
 import mars.drawingx.drawing.Drawing;
@@ -12,25 +14,19 @@ import mars.drawingx.gadgets.annotations.GadgetBoolean;
 import mars.drawingx.gadgets.annotations.GadgetInteger;
 import mars.drawingx.gadgets.annotations.GadgetVector;
 import mars.geometry.Vector;
+import mars.input.InputEvent;
+import mars.input.InputState;
 
 public class RootFindingFractals implements Drawing {
 	public static int size = 800;
+	static final int maxN = 100;
 	@GadgetBoolean
 	boolean coloringBasedOnIterations = true; // Color based on closest point or based on the number of iterations
 	@GadgetInteger(min = 0, max = 6)
-	int rootFindingMethod = 0; // 0-Newton, 1-Halley, 2-Schroeders, 3-B4, 4-EulerChebyshev, 5-Householder, 6-EzzatiSaleki
+	int rootFindingMethod = 0; // 0-Newton, 1-Halley, 2-Schroeders, 3-B4, 4-EulerChebyshev, 5-Householder,
+								// 6-EzzatiSaleki
 
-	@GadgetVector
-	Vector CORNFLOWERBLUE = new Vector(0.66236 * factor, 0.56228 * factor);
-	// @GadgetVector
-	Vector DARKOLIVEGREEN = new Vector(0 * factor, 1 * factor);
-	@GadgetVector
-	Vector LIMEGREEN = new Vector(0 * factor, -1 * factor);
-	//@GadgetVector
-	Vector DEEPSKYBLUE = new Vector(-1.32472 * factor, 0 * factor);
-	@GadgetVector
-	Vector MEDIUMPURPLE = new Vector(0.66236 * factor, -0.56228 * factor);
-	@GadgetInteger(min = 0, max = 100)
+	@GadgetInteger(min = 0, max = 1000)
 	int nIterations = 10;
 	@GadgetInteger(min = 1, max = 10)
 	int SuperSample = 1;
@@ -45,8 +41,7 @@ public class RootFindingFractals implements Drawing {
 	@GadgetVector
 	Vector centerPoint = new Vector(0, 0);
 
-	public static int factor = 200;
-	@GadgetInteger(min = 1, max = 100)
+	@GadgetInteger(min = 1, max = maxN)
 	public static int n = 5;
 
 	public static class Complex {
@@ -127,10 +122,8 @@ public class RootFindingFractals implements Drawing {
 	Vector[] lastVectors = null;
 
 	Complex a, c;
-	Complex[] p;
+	static Complex[] p;
 	static Color[] colors;
-	static Complex[] bonusP;
-	static Color[] bonusColor;
 
 	static Complex[] coefPoly, coefDeri, coefDeri2, coefDeri3;
 
@@ -265,7 +258,9 @@ public class RootFindingFractals implements Drawing {
 		g1.add(c);
 		z.sub(g1);
 	}
-	double m=0.2;
+
+	double m = 0.2;
+
 	public void stepEulerChebyshev(Complex z) {
 		Complex p = calcCoefs(z, coefPoly), d = calcCoefs(z, coefDeri), dd = calcCoefs(z, coefDeri2);
 		Complex prvi = p.copy();
@@ -278,16 +273,17 @@ public class RootFindingFractals implements Drawing {
 		ostatak.multiply(m);
 		ostatak.multiply(m);
 		prvi.multiply(m);
-		prvi.multiply((3-m));
+		prvi.multiply((3 - m));
 		prvi.divide(2);
 		prvi.add(ostatak);
 		prvi.multiply(a);
 		prvi.add(c);
 		z.sub(prvi);
 	}
-	
+
 	public void stepHouseholder(Complex z) {
-		Complex p = calcCoefs(z, coefPoly), d = calcCoefs(z, coefDeri), dd = calcCoefs(z, coefDeri2), ddd = calcCoefs(z, coefDeri3);
+		Complex p = calcCoefs(z, coefPoly), d = calcCoefs(z, coefDeri), dd = calcCoefs(z, coefDeri2),
+				ddd = calcCoefs(z, coefDeri3);
 		Complex d1 = p.copy();
 		d1.multiply(d);
 		d1.multiply(d);
@@ -313,15 +309,15 @@ public class RootFindingFractals implements Drawing {
 		d1.add(c);
 		z.sub(d1);
 	}
-	
+
 	public void stepEzzatiSaleki(Complex z) {
 		Complex p = calcCoefs(z, coefPoly), d = calcCoefs(z, coefDeri);
 		p.divide(d);
 		Complex N = z.copy();
 		stepNewton(N);
-		Complex a1 = new Complex(1,0);
+		Complex a1 = new Complex(1, 0);
 		a1.divide(d);
-		Complex a4 = new Complex(4,0);
+		Complex a4 = new Complex(4, 0);
 		d.add(calcCoefs(N, coefDeri));
 		a4.divide(d);
 		a1.sub(a4);
@@ -333,11 +329,11 @@ public class RootFindingFractals implements Drawing {
 	}
 
 	public void step(Complex z) {
-		if(rootFindingMethod == 6)
+		if (rootFindingMethod == 6)
 			stepEzzatiSaleki(z);
-		else if(rootFindingMethod == 5)
+		else if (rootFindingMethod == 5)
 			stepHouseholder(z);
-		else if(rootFindingMethod == 4)
+		else if (rootFindingMethod == 4)
 			stepEulerChebyshev(z);
 		else if (rootFindingMethod == 3)
 			stepB4(z);
@@ -357,34 +353,18 @@ public class RootFindingFractals implements Drawing {
 		return 1 - start * (1 - Math.pow(ratio, iter)) / (1 - ratio);
 	}
 
+	boolean pointMoved = false;
+	double circleRadious = 7;
 	public void draw(View view) {
-		Vector[] nowVectors = { CORNFLOWERBLUE, DARKOLIVEGREEN, LIMEGREEN, DEEPSKYBLUE, MEDIUMPURPLE, aCoef, cCoef,
-				new Vector(nIterations, SuperSample), new Vector(zoomToCenter, n), centerPoint,
-				new Vector(rootFindingMethod, coloringBasedOnIterations ? 1 : 0) };
+		Vector[] nowVectors = { aCoef, cCoef, new Vector(nIterations, SuperSample), new Vector(zoomToCenter, n),
+				centerPoint, new Vector(rootFindingMethod, coloringBasedOnIterations ? 1 : 0) };
 		double realzoomToCenter = Math.pow(1.5, zoomToCenter);
-		if (!Arrays.equals(nowVectors, lastVectors)) {
+		if (pointMoved || !Arrays.equals(nowVectors, lastVectors)) {
+			pointMoved = false;
 			lastVectors = nowVectors;
 
 			a = new Complex((aCoef.x + size / 2) / aFactor, aCoef.y / aFactor);
-			c = new Complex(cCoef.x / cFactor * SuperSample, cCoef.y / cFactor * SuperSample);
-			p = new Complex[Math.max(5, n)];
-			p[0] = new Complex(CORNFLOWERBLUE.x * SuperSample, CORNFLOWERBLUE.y * SuperSample);
-			p[4] = new Complex(DARKOLIVEGREEN.x * SuperSample, DARKOLIVEGREEN.y * SuperSample);
-			p[1] = new Complex(LIMEGREEN.x * SuperSample, LIMEGREEN.y * SuperSample);
-			p[3] = new Complex(DEEPSKYBLUE.x * SuperSample, DEEPSKYBLUE.y * SuperSample);
-			p[2] = new Complex(MEDIUMPURPLE.x * SuperSample, MEDIUMPURPLE.y * SuperSample);
-			for (int i = 5; i < n; i++) {
-				p[i] = new Complex(bonusP[i - 5].real * SuperSample, bonusP[i - 5].imaginary * SuperSample);
-			}
-
-			colors = new Color[n];
-
-			Color[] start = { Color.CORNFLOWERBLUE, Color.LIMEGREEN, Color.MEDIUMPURPLE, Color.DEEPSKYBLUE,
-					Color.DARKOLIVEGREEN };
-			for (int i = 0; i < Math.min(start.length, n); i++)
-				colors[i] = start[i];
-			for (int i = start.length; i < n; i++)
-				colors[i] = bonusColor[i - start.length];
+			c = new Complex(cCoef.x / cFactor, cCoef.y / cFactor);
 
 			calcCoefs();
 
@@ -393,17 +373,17 @@ public class RootFindingFractals implements Drawing {
 					int sumR = 0, sumG = 0, sumB = 0;
 					for (int xk = 0; xk < SuperSample; xk++) {
 						for (int yk = 0; yk < SuperSample; yk++) {
-							Complex tr = new Complex(i * SuperSample + xk - size / 2 * SuperSample,
-									-j * SuperSample - yk + size / 2 * SuperSample);
+							Complex tr = new Complex(i + (double) xk / SuperSample - size / 2,
+									-j -(double) yk / SuperSample + size / 2);
 							tr.real /= realzoomToCenter;
 							tr.imaginary /= realzoomToCenter;
-							tr.real += centerPoint.x * SuperSample;
-							tr.imaginary += centerPoint.y * SuperSample;
+							tr.real += centerPoint.x;
+							tr.imaginary += centerPoint.y;
 
 							Complex last = tr.copy();
 							int cnt = 0;
 							double plus = 0;
-							double T = 10 * SuperSample * SuperSample;
+							double T = 10;
 							for (int k = 0; k < nIterations; k++) {
 								for (int x = 0; coloringBasedOnIterations && x < n; x++) {
 									if (subtract(tr, p[x]).mod() < T) {
@@ -424,7 +404,7 @@ public class RootFindingFractals implements Drawing {
 							double dist = Double.MAX_VALUE;
 							int best = 0;
 							for (int x = 0; x < n; x++) {
-								double d = Math.min(dist, subtract(tr, p[x]).mod());
+								double d = subtract(tr, p[x]).mod();
 								if (d < dist) {
 									dist = d;
 									best = x;
@@ -453,30 +433,76 @@ public class RootFindingFractals implements Drawing {
 		view.fillCircleCentered(new Vector(0, 0), 1);
 
 		for (int i = 0; i < n; i++) {
-			Vector where = new Vector((p[i].real - centerPoint.x * SuperSample) / SuperSample * realzoomToCenter,
-					(p[i].imaginary - centerPoint.y * SuperSample) / SuperSample * realzoomToCenter);
+			Vector where = new Vector((p[i].real - centerPoint.x) * realzoomToCenter,
+					(p[i].imaginary - centerPoint.y) * realzoomToCenter);
 			if (Math.abs(where.x) > size / 2 || Math.abs(where.y) > size / 2)
 				continue;
-			view.setFill(Color.gray(0.125));
-			view.fillCircleCentered(where, 7);
+			view.setFill(Color.gray(0));
+			view.fillCircleCentered(where, circleRadious);
 			view.setFill(colors[i]);
-			view.fillCircleCentered(where, 6.5);
+			view.fillCircleCentered(where, circleRadious - 0.5);
+		}
+	}
+
+	int grabbedIndex = -1;
+
+	@Override
+	public void receiveEvent(View view, InputEvent event, InputState state, Vector pointerWorld,
+			Vector pointerViewBase) {
+		if (event.isMouseButtonPress(1)) {
+			double minDist = Double.MAX_VALUE;
+			int koji = -1;
+			Complex tr = new Complex(pointerWorld.x, pointerWorld.y);
+			for (int i = 0; i < n; i++) {
+				double d = subtract(tr, p[i]).mod();
+				if (d < minDist) {
+					minDist = d;
+					koji = i;
+				}
+			}
+			if(minDist < circleRadious * circleRadious) {
+				grabbedIndex = koji;
+			}
+		}
+		if (event.isMouseButtonRelease(1)) {
+			if(grabbedIndex != -1) {
+				grabbedIndex = -1;
+			}
+		}
+		if (event.isMouseMove()) {
+			if (grabbedIndex != -1) {
+				Complex tr = new Complex(pointerWorld.x, pointerWorld.y);
+				pointMoved = true;
+				p[grabbedIndex] = tr;
+			}
 		}
 	}
 
 	public static void main(String[] args) {
-		bonusColor = new Color[100];
-		for (int i = 0; i < 100; i++)
-			bonusColor[i] = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255),
+		p = new Complex[maxN];
+		colors = new Color[maxN];
+		colors[0] = Color.CORNFLOWERBLUE;
+		colors[1] = Color.LIMEGREEN;
+		colors[2] = Color.MEDIUMPURPLE;
+		colors[3] = Color.DEEPSKYBLUE;
+		colors[4] = Color.DARKOLIVEGREEN;
+		for (int i = 5; i < maxN; i++)
+			colors[i] = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255),
 					(int) (Math.random() * 255));
-		bonusP = new Complex[100];
-		for (int i = 0; i < 100; i++) {
+		int factor = 200;
+		p[0] = new Complex(0.66236 * factor, 0.56228 * factor);
+		p[1] = new Complex(0 * factor, -1 * factor);
+		p[2] = new Complex(0.66236 * factor, -0.56228 * factor);
+		p[3] = new Complex(-1.32472 * factor, 0 * factor);
+		p[4] = new Complex(0 * factor, 1 * factor);
+		for (int i = 5; i < maxN; i++) {
 			double x = Math.random() * size - size / 2;
 			double y = Math.random() * size - size / 2;
-			bonusP[i] = new Complex(x, y);
+			p[i] = new Complex(x, y);
 		}
 		image = new WritableImage(size, size);
 		pw = image.getPixelWriter();
+
 		DrawingApplication.launch(800, 720);
 	}
 
