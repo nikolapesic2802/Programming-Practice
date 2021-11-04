@@ -11,5 +11,7 @@ Fractal making program for 7 different root finding methods, inspired by [3Blue1
 ![15Colors](https://user-images.githubusercontent.com/36281594/140300107-feeafe34-68fb-4fc2-a98b-59a61f56fa48.png)
 ![Spiral](https://user-images.githubusercontent.com/36281594/140319198-b0dfa883-be68-48b8-8dd5-3d05eb4c1019.png)
 
-https://user-images.githubusercontent.com/36281594/140300209-58d31a34-904c-4dd2-ab8e-f13f6600a81c.mp4
+https://user-images.githubusercontent.com/36281594/140320577-da572fc7-1b30-4c20-9602-2b8a1eecf3e8.mp4
+
+
 
