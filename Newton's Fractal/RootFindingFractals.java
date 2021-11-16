@@ -13,6 +13,7 @@ import mars.drawingx.drawing.Drawing;
 import mars.drawingx.drawing.DrawingUtils;
 import mars.drawingx.drawing.View;
 import mars.drawingx.gadgets.annotations.GadgetAnimation;
+import mars.drawingx.gadgets.annotations.GadgetBoolean;
 import mars.drawingx.gadgets.annotations.GadgetInteger;
 import mars.drawingx.gadgets.annotations.GadgetVector;
 import mars.geometry.Vector;
@@ -24,12 +25,14 @@ public class RootFindingFractals implements Drawing {
 	static final int maxN = 100;
 	//@GadgetBoolean
 	boolean coloringBasedOnIterations = true; // Color based on closest point or based on the number of iterations
+	@GadgetBoolean
+	boolean coloringFarVerticesBlack = false; // Color based on closest point or based on the number of iterations
 	@GadgetInteger(min = 0, max = 6)
 	int rootFindingMethod = 0; // 0-Newton, 1-Halley, 2-Schroeders, 3-B4, 4-EulerChebyshev, 5-Householder,
 								// 6-EzzatiSaleki
 
 	@GadgetInteger(min = 0, max = 1000)
-	int nIterations = 10;
+	int nIterations = 100;
 	@GadgetInteger(min = 1, max = 10)
 	int SuperSample = 1;
 	public double aFactor = 200;
@@ -38,7 +41,7 @@ public class RootFindingFractals implements Drawing {
 	Vector aCoef = new Vector(aFactor - size / 2, 0);
 	@GadgetVector
 	Vector cCoef = new Vector(0, 0);
-	@GadgetAnimation(min = -20, max = 90)
+	@GadgetAnimation(min = -90, max = 90)
 	double zoom = 0;
 	//@GadgetVector
 	Vector centerPoint = new Vector(0, 0);
@@ -384,7 +387,7 @@ public class RootFindingFractals implements Drawing {
 	@Override
 	public void draw(View view) {
 		Vector[] nowVectors = { aCoef, cCoef, new Vector(nIterations, SuperSample), new Vector(zoom, n),
-				centerPoint, new Vector(rootFindingMethod, coloringBasedOnIterations ? 1 : 0) };
+				centerPoint, new Vector(rootFindingMethod, coloringBasedOnIterations ? 1 : 0), new Vector(coloringFarVerticesBlack ? 1 : 0, 0)};
 		calcRealZoom();
 		if (pointMoved || !Arrays.equals(nowVectors, lastVectors)) {
 			pointMoved = false;
@@ -432,6 +435,8 @@ public class RootFindingFractals implements Drawing {
 									best = x;
 								}
 							}
+							if(coloringFarVerticesBlack && dist > T)
+								best = maxN;
 							double mul = 255;
 							if (coloringBasedOnIterations) {
 								mul *= getVal(cnt - plus);
@@ -452,7 +457,6 @@ public class RootFindingFractals implements Drawing {
 				}
 			});
 		}
-		
 		DrawingUtils.clear(view, Color.gray(0.125));
 		view.drawImageCentered(Vector.ZERO, new WritableImage(new PixelBuffer<ByteBuffer>(size, size,buffer,format)), 1);
 
@@ -517,7 +521,7 @@ public class RootFindingFractals implements Drawing {
 			if (event.isMouseWheel(-1))
 				diff = -0.5;
 			zoom += diff;
-			if(zoom < -20 || zoom > 90)
+			if(zoom < -90 || zoom > 90)
 				zoom -= diff;
 			calcRealZoom();
 			Complex newPoint = toPoint(pointerWorld);
@@ -528,7 +532,7 @@ public class RootFindingFractals implements Drawing {
 
 	public static void main(String[] args) {
 		p = new Complex[maxN];
-		colors = new Color[maxN];
+		colors = new Color[maxN+1];
 		colors[0] = Color.CORNFLOWERBLUE;
 		colors[1] = Color.LIMEGREEN;
 		colors[2] = Color.MEDIUMPURPLE;
@@ -537,6 +541,8 @@ public class RootFindingFractals implements Drawing {
 		for (int i = 5; i < maxN; i++)
 			colors[i] = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255),
 					(int) (Math.random() * 255));
+		colors[maxN] = Color.BLACK;
+		
 		int factor = 200;
 		p[0] = new Complex(0.66236 * factor, 0.56228 * factor);
 		p[1] = new Complex(0 * factor, -1 * factor);
