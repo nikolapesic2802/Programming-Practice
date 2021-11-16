@@ -1,5 +1,10 @@
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelBuffer;
+import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -15,7 +20,7 @@ import mars.input.InputEvent;
 import mars.input.InputState;
 
 public class RootFindingFractals implements Drawing {
-	public static int size = 900;
+	public static int size = 800;
 	static final int maxN = 100;
 	//@GadgetBoolean
 	boolean coloringBasedOnIterations = true; // Color based on closest point or based on the number of iterations
@@ -346,10 +351,7 @@ public class RootFindingFractals implements Drawing {
 		else
 			stepNewton(z);
 	}
-
-	public static WritableImage image;
-	public static PixelWriter pw;
-
+	
 	double getVal(double iter) {
 		double ratio = 0.85, start = 0.07;
 		return 1 - start * (1 - Math.pow(ratio, iter)) / (1 - ratio);
@@ -375,6 +377,11 @@ public class RootFindingFractals implements Drawing {
 		return ans;
 	}
 
+	
+	PixelFormat<ByteBuffer> format = PixelFormat.getByteBgraPreInstance();
+	byte[] data = new byte[size*size*4];
+	ByteBuffer buffer = ByteBuffer.wrap(data);
+	@Override
 	public void draw(View view) {
 		Vector[] nowVectors = { aCoef, cCoef, new Vector(nIterations, SuperSample), new Vector(zoom, n),
 				centerPoint, new Vector(rootFindingMethod, coloringBasedOnIterations ? 1 : 0) };
@@ -388,8 +395,8 @@ public class RootFindingFractals implements Drawing {
 
 			calcCoefs();
 
-			IntStream.range(0, size).parallel().forEach(i -> {
-				for (int j = 0; j < size; j++) {
+			IntStream.range(0, size).parallel().forEach(j -> {
+				for (int i = 0; i < size; i++) {
 					int sumR = 0, sumG = 0, sumB = 0;
 					for (int xk = 0; xk < SuperSample; xk++) {
 						for (int yk = 0; yk < SuperSample; yk++) {
@@ -437,12 +444,17 @@ public class RootFindingFractals implements Drawing {
 					sumR /= SuperSample * SuperSample;
 					sumG /= SuperSample * SuperSample;
 					sumB /= SuperSample * SuperSample;
-					pw.setColor(i, j, Color.rgb(sumR, sumG, sumB));
+					int px=i+j*size;
+					data[px*4]=(byte) sumB;
+					data[px*4+1]=(byte) sumG;
+					data[px*4+2]=(byte) sumR;
+					data[px*4+3]=(byte) 0xff;
 				}
 			});
 		}
+		
 		DrawingUtils.clear(view, Color.gray(0.125));
-		view.drawImageCentered(Vector.ZERO, image, 1);
+		view.drawImageCentered(Vector.ZERO, new WritableImage(new PixelBuffer<ByteBuffer>(size, size,buffer,format)), 1);
 
 		for (int i = 0; i < n; i++) {
 			Vector where = new Vector((p[i].real - centerPoint.x) * realzoomToCenter,
@@ -455,7 +467,6 @@ public class RootFindingFractals implements Drawing {
 			view.fillCircleCentered(where, circleRadious - 0.5);
 		}
 	}
-
 	int grabbedIndex = -1;
 	boolean pressed = false;
 	Complex pointPressed;
@@ -506,6 +517,8 @@ public class RootFindingFractals implements Drawing {
 			if (event.isMouseWheel(-1))
 				diff = -0.5;
 			zoom += diff;
+			if(zoom < -20 || zoom > 90)
+				zoom -= diff;
 			calcRealZoom();
 			Complex newPoint = toPoint(pointerWorld);
 			oldPoint.sub(newPoint);
@@ -535,8 +548,6 @@ public class RootFindingFractals implements Drawing {
 			double y = Math.random() * size - size / 2;
 			p[i] = new Complex(x, y);
 		}
-		image = new WritableImage(size, size);
-		pw = image.getPixelWriter();
 
 		DrawingApplication.launch(800, 720);
 	}
